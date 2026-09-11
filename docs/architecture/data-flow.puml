@@ -1,0 +1,26 @@
+@startuml
+title Flujo de datos propuesto
+start
+:Fuente autorizada o MockCollector;
+:Validar y normalizar payload;
+if (¿Broker disponible?) then (sí)
+  :Publicar medición MQTT;
+else (no)
+  :Guardar en buffer local;
+  stop
+endif
+:Consumer traduce a entidad;
+:RegisterTrafficMeasurement;
+:Persistir mediante puerto;
+:Publicar evento de dominio;
+fork
+  :Actualizar estado consultable;
+fork again
+  :Solicitar predicción\nsolo si existe modelo validado;
+fork again
+  :Ejecutar what-if\nsolo si existe red SUMO validada;
+end fork
+:Exponer REST al dashboard;
+stop
+@enduml
+

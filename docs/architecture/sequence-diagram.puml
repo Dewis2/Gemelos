@@ -1,0 +1,35 @@
+@startuml
+title Secuencia objetivo del Gemelo Digital
+actor "Sensor futuro /\nMockCollector" as collector
+queue MQTT
+participant Backend
+participant "Digital Twin Core" as core
+participant ML
+participant SUMO
+database DB
+participant Dashboard
+
+collector -> MQTT : medición JSON validada
+MQTT -> Backend : evento
+Backend -> core : registrar medición
+core -> DB : guardar
+opt modelo entrenado y solicitado
+  core -> ML : predecir flujo
+  ML --> core : predicción + versión
+  core -> DB : guardar predicción
+end
+opt red validada y escenario solicitado
+  core -> SUMO : ejecutar escenario
+  SUMO --> core : observaciones de simulación
+  core -> DB : guardar resultados
+end
+Dashboard -> Backend : consultar estado/resultados
+Backend -> DB : leer
+DB --> Backend : registros
+Backend --> Dashboard : DTO JSON
+
+note over collector,Dashboard
+Secuencia propuesta; sensores, modelo y red SUMO están pendientes de validación.
+end note
+@enduml
+

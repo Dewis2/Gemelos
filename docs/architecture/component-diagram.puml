@@ -1,0 +1,24 @@
+@startuml
+title Componentes del Gemelo Digital
+skinparam componentStyle rectangle
+
+[Dashboard React] --> [FastAPI API] : HTTP/JSON
+[Edge Collector] --> [Mosquitto] : MQTT/JSON
+[Mosquitto] --> [MQTT Consumer]
+[MQTT Consumer] --> [Digital Twin Core]
+[FastAPI API] --> [Digital Twin Core]
+[Digital Twin Core] --> [PostgreSQL + PostGIS]
+[Digital Twin Core] --> [ML Adapter]
+[Digital Twin Core] --> [SUMO Adapter]
+[Digital Twin Core] --> [MQTT Publisher]
+[MQTT Publisher] --> [Mosquitto]
+[ML Adapter] --> [joblib model]
+[SUMO Adapter] --> [TraCI]
+[TraCI] --> [SUMO]
+
+note right of [SUMO]
+  Red exacta pendiente
+  de cartografía validada
+end note
+@enduml
+

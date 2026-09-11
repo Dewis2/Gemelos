@@ -1,0 +1,37 @@
+@startuml
+title Despliegue Edge–Cloud propuesto (PoC)
+
+node "Corredor físico" as physical {
+  artifact "Fuente futura o entrada autorizada" as source
+}
+node "Edge" as edge {
+  component "Collector"
+  database "Buffer local"
+}
+cloud "Red / broker" {
+  component "Eclipse Mosquitto"
+}
+node "Servidor PoC" {
+  component "FastAPI"
+  database "PostgreSQL + PostGIS"
+  component "ML"
+  component "SUMO / TraCI\n(opcional local)"
+}
+node "Cliente" {
+  component "Dashboard React"
+}
+
+source --> Collector : dato por validar
+Collector --> "Buffer local" : respaldo ante fallo
+Collector --> "Eclipse Mosquitto" : MQTT
+"Eclipse Mosquitto" --> FastAPI : eventos
+FastAPI --> "PostgreSQL + PostGIS"
+FastAPI --> ML
+FastAPI --> "SUMO / TraCI\n(opcional local)"
+"Dashboard React" --> FastAPI : REST
+
+note bottom
+  Vista objetivo; no implica infraestructura física actualmente instalada.
+end note
+@enduml
+

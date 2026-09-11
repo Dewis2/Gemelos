@@ -1,0 +1,37 @@
+@startuml
+title Arquitectura hexagonal — backend
+skinparam componentStyle rectangle
+left to right direction
+
+package "Driving adapters" {
+  [FastAPI REST] as api
+  [MQTT Consumer] as consumer
+}
+package "Application core" {
+  interface "Inbound ports" as inbound
+  [Use Cases] as usecases
+  interface "Outbound ports" as outbound
+  package Domain {
+    [Entities]
+    [Domain Rules]
+  }
+}
+package "Driven adapters" {
+  [SQLAlchemy / PostGIS] as db
+  [joblib / scikit-learn] as ml
+  [SUMO / TraCI] as sumo
+  [MQTT Publisher] as publisher
+}
+
+api --> inbound
+consumer --> inbound
+inbound --> usecases
+usecases --> [Entities]
+usecases --> [Domain Rules]
+usecases --> outbound
+db ..|> outbound
+ml ..|> outbound
+sumo ..|> outbound
+publisher ..|> outbound
+@enduml
+
