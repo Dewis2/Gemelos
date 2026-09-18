@@ -1,0 +1,23 @@
+dataset_id: huancayo_historical_counts_2013
+title: "Aforos históricos del Plan Regulador de Rutas de Transporte Urbano"
+provider: "Municipalidad Provincial de Huancayo"
+country: Peru
+source_type: historical_local_reference
+temporal_granularity: day_period
+spatial_granularity: count_point
+period_min: 2013
+period_max: 2013
+license: "NO DETERMINADO"
+source_page: "https://documentos.munihuancayo.gob.pe/documentos/servicios_publica/transito_transporte/plan_regulador_rutas.pdf"
+downloaded_at: 2026-09-11T21:17:33.346695+00:00
+checksum: 35b6830d6fe3b0ec8e5e3bfaa761ca005e8e2680b3d28a43dc8b98cff82479c1
+local_validation: false
+allowed_uses:
+  demo: true
+  ingestion_validation: true
+  dashboard: true
+  ml_experiment: false
+  huancayo_local_validation: false
+limitations:
+  - "Los nueve registros son aforos históricos de 2013 y no representan tráfico actual de 2026."
+  - "No se interpolan los periodos mañana, mediodía y noche."

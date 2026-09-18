@@ -1,0 +1,23 @@
+dataset_id: mtc_peru_toll_locations
+title: "Unidades de Peaje de la Red Vial Nacional 2024-2025"
+provider: "Ministerio de Transportes y Comunicaciones - MTC"
+country: Peru
+source_type: official_open_government_data
+temporal_granularity: snapshot
+spatial_granularity: point
+period_min: 2024-12-30
+period_max: 2025-06-30
+license: "License Not Specified (catalog); ODC Attribution stated in metadata PDF"
+source_page: "https://www.datosabiertos.gob.pe/dataset/unidades-de-peaje-de-la-red-vial-nacional-2024-%E2%80%93-2025-ii-trimestre-ministerio-de-transportes"
+downloaded_at: 2026-09-11T21:05:27.094244+00:00
+checksum: eea09344b54b9d032ed684586e74d9037c13153670c7f577019e5e087ebddfc9
+local_validation: false
+allowed_uses:
+  demo: true
+  ingestion_validation: true
+  dashboard: true
+  ml_experiment: false
+  huancayo_local_validation: false
+limitations:
+  - "Existe una discrepancia de licencia entre la ficha del catálogo y el PDF de metadatos."
+  - "No se redistribuye el archivo raw hasta aclarar sus condiciones."

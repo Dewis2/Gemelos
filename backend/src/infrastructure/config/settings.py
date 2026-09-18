@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     mqtt_host: str = "localhost"
     mqtt_port: int = 1883
     mqtt_enabled: bool = False
+    data_root: str = "data"
+    demo_repository: str = "memory"
+    demo_ml_metadata_path: str = "ml/models/demo_peru/metadata.json"
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
     log_level: str = "INFO"
     ml_model_path: str = "../ml/models/traffic_model.joblib"

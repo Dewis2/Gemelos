@@ -1,0 +1,23 @@
+dataset_id: ositran_peru_road_traffic
+title: "Tráfico Vehicular - CARRETERAS"
+provider: "OSITRAN"
+country: Peru
+source_type: official_open_government_data
+temporal_granularity: monthly
+spatial_granularity: toll_unit
+period_min: 2019-01
+period_max: 2026-03
+license: "Open Data Commons Attribution License"
+source_page: "https://www.datosabiertos.gob.pe/dataset/tr%C3%A1fico-vehicular-carreteras-organismo-supervisor-de-la-inversi%C3%B3n-en-infraestructura-de"
+downloaded_at: 2026-09-11T21:05:35.877339+00:00
+checksum: cbfe0df4e887b348db5ec5ce41d32551604416644bdc5c5da853540fb283048f
+local_validation: false
+allowed_uses:
+  demo: true
+  ingestion_validation: true
+  dashboard: true
+  ml_experiment: true
+  huancayo_local_validation: false
+limitations:
+  - "No incluye un campo de región; cualquier filtro regional exige una unión verificable con el GeoJSON MTC."
+  - "Los conteos de peaje no representan tráfico urbano de la Av. Ferrocarril."

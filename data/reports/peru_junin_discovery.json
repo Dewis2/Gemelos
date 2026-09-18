@@ -1,0 +1,207 @@
+{
+  "junin_filter_available": true,
+  "matched_records": 588,
+  "matched_toll_units": [
+    {
+      "source_location_id": "12PE22BCHO1",
+      "flow_name": "Chalhuapuquio (El Pedregal)",
+      "geojson_name": "Chalhuapuquio"
+    },
+    {
+      "source_location_id": "12PE3NCRA1",
+      "flow_name": "Casaracra-Concesión",
+      "geojson_name": "Casaracra"
+    },
+    {
+      "source_location_id": "12PE3SHUO1",
+      "flow_name": "Chacapampa",
+      "geojson_name": "Chacapampa"
+    },
+    {
+      "source_location_id": "12PE3SQLA1",
+      "flow_name": "Quiulla-Concesión",
+      "geojson_name": "Quiulla"
+    }
+  ],
+  "flow_locations": [
+    {
+      "dataset_id": "mtc_peru_toll_flow",
+      "source_location_id": "12PE3NCRA1",
+      "name": "Casaracra-Concesión",
+      "region": "Junín",
+      "administration": "Concesionado"
+    },
+    {
+      "dataset_id": "mtc_peru_toll_flow",
+      "source_location_id": "12PE3SHUO1",
+      "name": "Chacapampa",
+      "region": "Junín",
+      "administration": "No concesionado"
+    },
+    {
+      "dataset_id": "mtc_peru_toll_flow",
+      "source_location_id": "12PE22BCHO1",
+      "name": "Chalhuapuquio (El Pedregal)",
+      "region": "Junín",
+      "administration": "No concesionado"
+    },
+    {
+      "dataset_id": "mtc_peru_toll_flow",
+      "source_location_id": "12PE3SQLA1",
+      "name": "Quiulla-Concesión",
+      "region": "Junín",
+      "administration": "Concesionado"
+    }
+  ],
+  "geojson_locations": [
+    {
+      "dataset_id": "mtc_peru_toll_locations",
+      "source_location_id": "12PE3NCRA1",
+      "name": "Casaracra",
+      "location_type": "unidad_de_peaje",
+      "operator": "Concesionaria Desarrollo Vial de los Andes S.A.C. (DEVIANDES)",
+      "status": "Operativo",
+      "region": "JUNIN",
+      "province": "YAULI",
+      "district": "PACCHA",
+      "longitude": -75.94725830802446,
+      "latitude": -11.448088834931752,
+      "crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+      "properties": {
+        "IDPEAJE": 36,
+        "NOMBRE": "Casaracra",
+        "LABEL": "U.P. Casaracra",
+        "CODPEAJE": "12PE3NCRA1",
+        "CODRUTA": "PE-3N",
+        "INICIO": 10.5,
+        "CODCLOG": "02CRL15",
+        "DEPARTAMEN": "JUNIN",
+        "PROVINCIA": "YAULI",
+        "DISTRITO": "PACCHA",
+        "LOCALIDAD": "CASARACRA",
+        "IDDPTO": "12",
+        "IDPROV": "1208",
+        "IDDIST": "120806",
+        "ES_CONCES": 1,
+        "TITULAR": "Pública (concesionada)",
+        "UBICACION": "Carretera Central Long. Sierra km 10+500",
+        "ESTADO": "Operativo",
+        "ADMINIST": "Concesionaria Desarrollo Vial de los Andes S.A.C. (DEVIANDES)",
+        "FECCORTE": "20250630"
+      }
+    },
+    {
+      "dataset_id": "mtc_peru_toll_locations",
+      "source_location_id": "12PE3SHUO1",
+      "name": "Chacapampa",
+      "location_type": "unidad_de_peaje",
+      "operator": "Provias Nacional",
+      "status": "Operativo",
+      "region": "JUNIN",
+      "province": "HUANCAYO",
+      "district": "HUACRAPUQUIO",
+      "longitude": -75.20822400043721,
+      "latitude": -12.169387000009976,
+      "crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+      "properties": {
+        "IDPEAJE": 4,
+        "NOMBRE": "Chacapampa",
+        "LABEL": "U.P. Chacapampa",
+        "CODPEAJE": "12PE3SHUO1",
+        "CODRUTA": "PE-3S",
+        "INICIO": 136.5,
+        "CODCLOG": "02CRL16",
+        "DEPARTAMEN": "JUNIN",
+        "PROVINCIA": "HUANCAYO",
+        "DISTRITO": "HUACRAPUQUIO",
+        "LOCALIDAD": "HUACRAPUQUIO",
+        "IDDPTO": "12",
+        "IDPROV": "1201",
+        "IDDIST": "120116",
+        "ES_CONCES": 0,
+        "TITULAR": "Pública",
+        "UBICACION": "Carretera La Oroya-Huancayo km 136+500",
+        "ESTADO": "Operativo",
+        "ADMINIST": "Provias Nacional",
+        "FECCORTE": "20250630"
+      }
+    },
+    {
+      "dataset_id": "mtc_peru_toll_locations",
+      "source_location_id": "12PE22BCHO1",
+      "name": "Chalhuapuquio",
+      "location_type": "unidad_de_peaje",
+      "operator": "Provias Nacional",
+      "status": "Operativo",
+      "region": "JUNIN",
+      "province": "CHANCHAMAYO",
+      "district": "SAN RAMÓN",
+      "longitude": -75.4096505936999,
+      "latitude": -11.149514627897702,
+      "crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+      "properties": {
+        "IDPEAJE": 68,
+        "NOMBRE": "Chalhuapuquio",
+        "LABEL": "U.P. Chalhuapuquio",
+        "CODPEAJE": "12PE22BCHO1",
+        "CODRUTA": "PE-22B",
+        "INICIO": 89.24,
+        "CODCLOG": "02CRL19",
+        "DEPARTAMEN": "JUNIN",
+        "PROVINCIA": "CHANCHAMAYO",
+        "DISTRITO": "SAN RAMÓN",
+        "LOCALIDAD": "CHALLHUAPUQUIO",
+        "IDDPTO": "12",
+        "IDPROV": "1203",
+        "IDDIST": "120305",
+        "ES_CONCES": 0,
+        "TITULAR": "Pública",
+        "UBICACION": "Carretera Dv. Las Vegas-La Merced km 89+240",
+        "ESTADO": "Operativo",
+        "ADMINIST": "Provias Nacional",
+        "FECCORTE": "20250630"
+      }
+    },
+    {
+      "dataset_id": "mtc_peru_toll_locations",
+      "source_location_id": "12PE3SQLA1",
+      "name": "Quiulla",
+      "location_type": "unidad_de_peaje",
+      "operator": "Concesionaria Desarrollo Vial de los Andes S.A.C. (DEVIANDES)",
+      "status": "Operativo",
+      "region": "JUNIN",
+      "province": "YAULI",
+      "district": "LA OROYA",
+      "longitude": -75.82976799989325,
+      "latitude": -11.627507887279137,
+      "crs": "urn:ogc:def:crs:OGC:1.3:CRS84",
+      "properties": {
+        "IDPEAJE": 29,
+        "NOMBRE": "Quiulla",
+        "LABEL": "U.P. Quiulla",
+        "CODPEAJE": "12PE3SQLA1",
+        "CODRUTA": "PE-3S",
+        "INICIO": 18.9,
+        "CODCLOG": "02CRL16",
+        "DEPARTAMEN": "JUNIN",
+        "PROVINCIA": "YAULI",
+        "DISTRITO": "LA OROYA",
+        "LOCALIDAD": "QUIULLA",
+        "IDDPTO": "12",
+        "IDPROV": "1208",
+        "IDDIST": "120801",
+        "ES_CONCES": 1,
+        "TITULAR": "Pública (concesionada)",
+        "UBICACION": "Carretera Central La Oroya-Huancayo km 18+900",
+        "ESTADO": "Operativo",
+        "ADMINIST": "Concesionaria Desarrollo Vial de los Andes S.A.C. (DEVIANDES)",
+        "FECCORTE": "20250630"
+      }
+    }
+  ],
+  "method": "Filtro explícito DEPARTAMENTO/DEPARTAMEN, normalizado sin distinguir mayúsculas.",
+  "limitations": [
+    "OSITRAN no contiene región; sus registros solo pueden asociarse mediante un join verificable con el GeoJSON.",
+    "La presencia en Junín no implica pertenencia al corredor urbano de la Av. Ferrocarril."
+  ]
+}

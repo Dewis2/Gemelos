@@ -72,7 +72,7 @@ backend/       núcleo hexagonal, API, ORM, migraciones y tests
 data/          política, referencias verificadas y placeholders
 docs/          arquitectura, base de datos, API, datasets y ADR
 edge/          colector mock, normalización y buffer
-frontend/      dashboard React mínimo
+frontend/      PMV React con arquitectura hexagonal
 ml/            features, división temporal, entrenamiento, evaluación e inferencia
 simulation/    estructura SUMO/TraCI sin geometría ficticia
 scripts/       comandos auxiliares
@@ -181,6 +181,35 @@ python -m ml.src.training.train ruta/dataset.csv --model random-forest
 El CSV debe incluir `timestamp` y `traffic_volume` o indicar los nombres por flags.
 Los artefactos pesados están ignorados. Sin un modelo presente, el endpoint responde
 503 con un mensaje explícito, en lugar de fabricar una predicción.
+
+## Demo con datos oficiales del Perú
+
+La plataforma puede ejecutarse con datos históricos oficiales publicados por MTC y
+OSITRAN para demostrar ingesta, validación, almacenamiento, PostGIS, API, replay,
+MQTT, Digital Twin Core, dashboard, analítica y un experimento ML independiente.
+
+Los archivos originales se descargan desde la Plataforma Nacional de Datos Abiertos
+y permanecen fuera de Git. Para preparar catálogos y reportes reproducibles:
+
+```powershell
+.venv\Scripts\python.exe scripts\demo_peru.py prepare
+```
+
+Después, inicie el sistema y abra `http://localhost:5173/demo-peru`:
+
+```bash
+docker compose up --build
+```
+
+La pantalla identifica siempre la fuente, conserva el periodo histórico original y
+separa los topics `demo/peru/mtc/traffic`, `demo/peru/ositran/traffic` y
+`huancayo/ferrocarril/traffic`.
+
+> **Esta demostración verifica el funcionamiento técnico del software. No constituye
+> una validación del modelo de movilidad de la Av. Ferrocarril.**
+
+Los registros P03, P04 y P42 corresponden a aforos históricos y NO representan el
+tráfico actual de Huancayo en 2026. Consulte [la guía completa](docs/demo-peru/README.md).
 
 ## SUMO / TraCI
 

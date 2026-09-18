@@ -6,10 +6,13 @@ left to right direction
 package "Driving adapters" {
   [FastAPI REST] as api
   [MQTT Consumer] as consumer
+  [Demo Perú CLI] as cli
 }
 package "Application core" {
   interface "Inbound ports" as inbound
   [Use Cases] as usecases
+  [Historical Replay] as replay
+  interface "TrafficDatasetPort" as datasetport
   interface "Outbound ports" as outbound
   package Domain {
     [Entities]
@@ -17,6 +20,8 @@ package "Application core" {
   }
 }
 package "Driven adapters" {
+  [Official Peru Dataset] as official
+  [MTC / OSITRAN / Huancayo Adapters] as datasetadapters
   [SQLAlchemy / PostGIS] as db
   [joblib / scikit-learn] as ml
   [SUMO / TraCI] as sumo
@@ -25,7 +30,14 @@ package "Driven adapters" {
 
 api --> inbound
 consumer --> inbound
+cli --> inbound
 inbound --> usecases
+official --> datasetadapters
+datasetadapters ..|> datasetport
+datasetport --> usecases
+usecases --> replay
+replay --> publisher
+replay --> db
 usecases --> [Entities]
 usecases --> [Domain Rules]
 usecases --> outbound
@@ -34,4 +46,3 @@ ml ..|> outbound
 sumo ..|> outbound
 publisher ..|> outbound
 @enduml
-

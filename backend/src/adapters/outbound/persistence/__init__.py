@@ -15,3 +15,17 @@ __all__ = [
     "SqlAlchemySimulationRepository",
     "SqlAlchemyTrafficRepository",
 ]
+from adapters.outbound.persistence.demo_repository import (
+    InMemoryTrafficAggregateRepository,
+    SqlAlchemyIngestionRunRecorder,
+    SqlAlchemyTrafficAggregateRepository,
+    SqlAlchemyTrafficLocationRepository,
+)
+
+__all__ = [
+    "InMemoryStore",
+    "InMemoryTrafficAggregateRepository",
+    "SqlAlchemyIngestionRunRecorder",
+    "SqlAlchemyTrafficAggregateRepository",
+    "SqlAlchemyTrafficLocationRepository",
+]

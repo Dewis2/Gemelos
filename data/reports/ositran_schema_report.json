@@ -1,0 +1,61 @@
+{
+  "path": "data\\external\\ositran\\road_traffic\\raw\\ositran_road_traffic.csv",
+  "encoding": "utf-8-sig",
+  "delimiter": ";",
+  "row_count": 68391,
+  "columns": [
+    "ANIO",
+    "MES",
+    "ENTIDAD_PRESTADORA",
+    "CONCESION",
+    "SIGLAS",
+    "PEAJE",
+    "CLASE_VEHICULO",
+    "TIPO_TARIFA",
+    "TIPO_VEHICULO",
+    "TIPO_EJE_VEH",
+    "NRO_EJES",
+    "CANTIDAD VEHICULOS"
+  ],
+  "nulls": {
+    "ANIO": 0,
+    "MES": 0,
+    "ENTIDAD_PRESTADORA": 0,
+    "CONCESION": 0,
+    "SIGLAS": 0,
+    "PEAJE": 0,
+    "CLASE_VEHICULO": 0,
+    "TIPO_TARIFA": 0,
+    "TIPO_VEHICULO": 0,
+    "TIPO_EJE_VEH": 0,
+    "NRO_EJES": 5850,
+    "CANTIDAD VEHICULOS": 0
+  },
+  "checksum_sha256": "cbfe0df4e887b348db5ec5ce41d32551604416644bdc5c5da853540fb283048f",
+  "dataset_id": "ositran_peru_road_traffic",
+  "valid": true,
+  "missing_required_columns": [],
+  "rows_valid": 68391,
+  "rows_invalid": 0,
+  "period_min": "2019-01",
+  "period_max": "2026-03",
+  "regions": [],
+  "region_field_available": false,
+  "locations": 60,
+  "vehicle_categories": [
+    "LIGERO",
+    "PESADO",
+    "SIN ESPECIFICAR"
+  ],
+  "vehicle_classes": [
+    "EVADIDOS",
+    "EXONERADOS",
+    "PAGANTES"
+  ],
+  "column_mapping": {
+    "PEAJE": "source_location_name",
+    "ANIO+MES": "period_start/period_end",
+    "TIPO_VEHICULO": "vehicle_category",
+    "CANTIDAD VEHICULOS": "vehicle_count"
+  }
+}

@@ -85,3 +85,12 @@ class DigitalTwinStateResponse(BaseModel):
     intersection_count: int
     latest_measurements: list[TrafficMeasurementResponse]
     geometry_status: str
+
+
+class ReplayStartRequest(BaseModel):
+    dataset_id: str
+    start_period: str | None = None
+    end_period: str | None = None
+    location_id: str | None = None
+    speed_factor: int = Field(default=1)
+    limit: int = Field(default=60, ge=1, le=500)

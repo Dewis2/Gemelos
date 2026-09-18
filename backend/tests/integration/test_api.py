@@ -60,8 +60,25 @@ def test_scenario_lifecycle(client: TestClient) -> None:
 
 def test_compare_route_is_not_shadowed_by_scenario_id(client: TestClient) -> None:
     first, second = uuid4(), uuid4()
-    response = client.get(
-        f"/api/v1/scenarios/compare?scenario_ids={first}&scenario_ids={second}"
-    )
+    response = client.get(f"/api/v1/scenarios/compare?scenario_ids={first}&scenario_ids={second}")
     assert response.status_code == 200
     assert response.json()[str(first)]["result_count"] == 0
+
+
+def test_demo_peru_exposes_catalog_and_huancayo_reference(client: TestClient) -> None:
+    datasets = client.get("/api/v1/datasets")
+    traffic = client.get(
+        "/api/v1/demo/peru/traffic",
+        params={"dataset_id": "huancayo_historical_counts_2013"},
+    )
+    comparison = client.get("/api/v1/demo/peru/comparison")
+    assert datasets.status_code == 200
+    assert {item["dataset_id"] for item in datasets.json()} >= {
+        "mtc_peru_toll_flow",
+        "ositran_peru_road_traffic",
+        "huancayo_historical_counts_2013",
+    }
+    assert traffic.status_code == 200
+    assert traffic.json()["record_count"] == 9
+    assert "No representan tráfico actual de 2026" in traffic.json()["warning"]
+    assert comparison.json()["comparable_as_same_dataset"] is False

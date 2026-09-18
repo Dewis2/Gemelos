@@ -1,13 +1,23 @@
 # Política y niveles de datos
 
-## A. Dataset académico externo
+## A. Datos oficiales peruanos para demostración
+
+`external/mtc/` y `external/ositran/` contienen tres niveles: `raw` conserva los
+recursos descargados sin modificación, `staging` se reserva para limpieza explícita
+y `curated` para datos normalizados. El contenido de esos directorios está ignorado
+por Git, salvo `.gitkeep`.
+
+Estos datos demuestran la arquitectura y analítica del software. Los conteos de
+peaje no representan tráfico urbano de la Av. Ferrocarril.
+
+## Dataset académico externo
 
 **Metro Interstate Traffic Volume**, UCI Machine Learning Repository, contiene
 48 204 observaciones horarias (DOI: `10.24432/C5X60B`). Sus observaciones pertenecen
 a Minnesota, Estados Unidos, y solo sirven para experimentación técnica del pipeline.
 No constituyen evidencia sobre Huancayo ni deben mezclarse con una evaluación local.
 
-## B. Benchmark histórico de Huancayo
+## B. Datos históricos de Huancayo
 
 `reference/huancayo_historical_counts.csv` transcribe únicamente los nueve valores
 proporcionados del *Plan Regulador de Rutas de Transporte Urbano* de la Municipalidad
@@ -15,7 +25,7 @@ Provincial de Huancayo (2013). Se conserva año, fuente y uso permitido como met
 
 > **Estos aforos son históricos y NO representan el tráfico de Huancayo en 2026.**
 
-## C. Dataset local actual
+## C. Datos locales actuales de Av. Ferrocarril
 
 No existe todavía en el repositorio. `local_2026/` es solo un marcador: pendiente
 de campaña de aforo o acceso a datos oficiales actuales. Nunca se deben presentar

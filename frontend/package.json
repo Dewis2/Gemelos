@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "test": "tsc -b --pretty false && node scripts/check-architecture.mjs",
+    "lint": "node scripts/check-architecture.mjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -25,4 +26,3 @@
     "vite": "^6.0.5"
   }
 }
-

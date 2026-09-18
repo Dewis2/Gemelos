@@ -1,0 +1,23 @@
+dataset_id: mtc_peru_toll_flow
+title: "Flujo vehicular registrado en las unidades de peaje de la Red Vial Nacional"
+provider: "Ministerio de Transportes y Comunicaciones - MTC"
+country: Peru
+source_type: official_open_government_data
+temporal_granularity: monthly
+spatial_granularity: toll_unit
+period_min: 2014-01
+period_max: 2026-03
+license: "License Not Specified"
+source_page: "https://www.datosabiertos.gob.pe/dataset/flujo-vehicular-registrado-en-las-unidades-de-peaje-de-la-red-vial-nacional-2014-%E2%80%93-2026-i"
+downloaded_at: 2026-09-11T21:05:24.948114+00:00
+checksum: b0055a28c664fadd07ecd92f7bb37e2031684a323b822ba5354ec82a0de88cf0
+local_validation: false
+allowed_uses:
+  demo: true
+  ingestion_validation: true
+  dashboard: true
+  ml_experiment: true
+  huancayo_local_validation: false
+limitations:
+  - "Los conteos de peaje no representan tráfico urbano de la Av. Ferrocarril."
+  - "La licencia no está especificada en la ficha del catálogo; el archivo raw no se redistribuye."

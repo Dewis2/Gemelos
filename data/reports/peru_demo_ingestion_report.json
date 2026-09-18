@@ -1,0 +1,132 @@
+{
+  "generated_at": "2026-09-11T21:35:07.668730+00:00",
+  "datasets_downloaded": [
+    "mtc_peru_toll_flow",
+    "mtc_peru_toll_locations",
+    "ositran_peru_road_traffic"
+  ],
+  "files_processed": 4,
+  "rows_read": {
+    "mtc_toll_flow": 11532,
+    "ositran_road_traffic": 68391,
+    "mtc_toll_locations": 155,
+    "huancayo_historical": 9
+  },
+  "rows_valid": {
+    "mtc_toll_flow": 11532,
+    "ositran_road_traffic": 68391,
+    "mtc_toll_locations": 155,
+    "huancayo_historical": 9
+  },
+  "rows_invalid": {
+    "mtc_toll_flow": 0,
+    "ositran_road_traffic": 0,
+    "mtc_toll_locations": 0,
+    "huancayo_historical": 0
+  },
+  "normalized_measurements": 102996,
+  "duplicates_within_sources": 111,
+  "period_min": "2014-01",
+  "period_max": "2026-03",
+  "locations": {
+    "mtc_flow_unique": 82,
+    "geojson_features": 155,
+    "geojson_unique_current": 78,
+    "ositran_unique": 60
+  },
+  "regions": [
+    "Amazonas",
+    "Apurímac",
+    "Arequipa",
+    "Ayacucho",
+    "Cajamarca",
+    "Cusco",
+    "Huánuco",
+    "Ica",
+    "Junín",
+    "La Libertad",
+    "Lambayeque",
+    "Lima",
+    "Madre de Dios",
+    "Moquegua",
+    "Piura",
+    "Puno",
+    "San Martín",
+    "Tacna",
+    "Tumbes",
+    "Áncash"
+  ],
+  "vehicle_categories": {
+    "mtc": [
+      "total",
+      "ligeros",
+      "pesados"
+    ],
+    "ositran": [
+      "LIGERO",
+      "PESADO",
+      "SIN ESPECIFICAR"
+    ]
+  },
+  "nulls": {
+    "mtc": {
+      "ADMINIST": 0,
+      "CODIGO_PEAJE": 0,
+      "DEPARTAMENTO": 0,
+      "NOMBRE_PEAJE": 0,
+      "VEH_LIGEROS_TAR_DIF": 0,
+      "VEH_LIGEROS_AUTOMOVILES": 0,
+      "VEH_PESADOS_TAR_DIF": 0,
+      "VEH_PESADOS_2E": 0,
+      "VEH_PESADOS_3E": 0,
+      "VEH_PESADOS_4E": 0,
+      "VEH_PESADOS_5E": 0,
+      "VEH_PESADOS_6E": 0,
+      "VEH_PESADOS_7E": 0,
+      "VEH_LIGEROS_TOTAL": 0,
+      "VEH_LIGEROS_IMD": 0,
+      "VEH_PESADOS_TOTAL": 0,
+      "VEH_PESADOS_IMD": 0,
+      "VEH_TOTAL": 0,
+      "VEH_IMD": 0,
+      "ANIO": 0,
+      "MES": 0,
+      "PERIODO": 0
+    },
+    "ositran": {
+      "ANIO": 0,
+      "MES": 0,
+      "ENTIDAD_PRESTADORA": 0,
+      "CONCESION": 0,
+      "SIGLAS": 0,
+      "PEAJE": 0,
+      "CLASE_VEHICULO": 0,
+      "TIPO_TARIFA": 0,
+      "TIPO_VEHICULO": 0,
+      "TIPO_EJE_VEH": 0,
+      "NRO_EJES": 5850,
+      "CANTIDAD VEHICULOS": 0
+    }
+  },
+  "join_rate_with_geojson": {
+    "join_priority": [
+      "official_code",
+      "normalized_name"
+    ],
+    "flow_unique_locations": 82,
+    "geojson_unique_locations": 78,
+    "matched_exact": 77,
+    "matched_normalized": 1,
+    "unmatched": 4,
+    "ambiguous": 0,
+    "unmatched_location_ids": [
+      "03PE30APPR1",
+      "08PE3SCSC1",
+      "08PE3SSAY1",
+      "21PE3SCRO1"
+    ],
+    "ambiguous_location_ids": [],
+    "join_rate_percent": 95.122
+  },
+  "persistence": "not_executed_by_report_generator"
+}

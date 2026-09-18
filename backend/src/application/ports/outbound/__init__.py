@@ -8,6 +8,10 @@ from application.ports.outbound.ports import (
     TrafficRepository,
     TrafficSimulatorPort,
 )
+from application.ports.outbound.traffic_dataset_port import (
+    TrafficAggregateRepositoryPort,
+    TrafficDatasetPort,
+)
 
 __all__ = [
     "EventPublisherPort",
@@ -18,4 +22,6 @@ __all__ = [
     "SimulationRepository",
     "TrafficRepository",
     "TrafficSimulatorPort",
+    "TrafficAggregateRepositoryPort",
+    "TrafficDatasetPort",
 ]

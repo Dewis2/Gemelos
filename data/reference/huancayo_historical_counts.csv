@@ -1,11 +1,10 @@
-point,period,vehicles,year,source,usage
-P03,morning,1779,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P03,midday,1744,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P03,night,1888,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P04,morning,1593,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P04,midday,1501,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P04,night,1730,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P42,morning,553,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P42,midday,559,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-P42,night,545,2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,historical_benchmark_only
-
+dataset_id,source,year,point,period,vehicles,data_classification
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P03,morning,1779,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P03,midday,1744,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P03,night,1888,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P04,morning,1593,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P04,midday,1501,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P04,night,1730,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P42,morning,553,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P42,midday,559,historical_local_reference
+huancayo_historical_counts_2013,Municipalidad Provincial de Huancayo - Plan Regulador de Rutas de Transporte Urbano,2013,P42,night,545,historical_local_reference

@@ -3,11 +3,23 @@ from typing import Any
 from uuid import UUID, uuid4
 
 from geoalchemy2 import Geometry
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Index, Integer, String
+from sqlalchemy import (
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
+from application.dto.peru_demo import DatasetScope, TrafficAggregate
 from domain.entities import (
     Intersection,
     RoadSegment,
@@ -174,3 +186,103 @@ class SimulationResultModel(Base):
             emissions=self.emissions,
             created_at=self.created_at,
         )
+
+
+class TrafficAggregateModel(Base):
+    __tablename__ = "traffic_aggregates"
+    __table_args__ = (
+        Index("ix_traffic_aggregates_dataset_period", "dataset_id", "period_start"),
+        Index("ix_traffic_aggregates_location", "source_location_id"),
+    )
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    natural_key: Mapped[str] = mapped_column(String(500), unique=True, nullable=False)
+    dataset_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    source_record_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    source_provider: Mapped[str] = mapped_column(String(200), nullable=False)
+    source_country: Mapped[str] = mapped_column(String(80), nullable=False)
+    source_region: Mapped[str | None] = mapped_column(String(100))
+    source_location_id: Mapped[str] = mapped_column(String(120), nullable=False)
+    source_location_name: Mapped[str] = mapped_column(String(200), nullable=False)
+    period_start: Mapped[datetime] = mapped_column(Date, nullable=False)
+    period_end: Mapped[datetime] = mapped_column(Date, nullable=False)
+    temporal_granularity: Mapped[str] = mapped_column(String(40), nullable=False)
+    vehicle_category: Mapped[str] = mapped_column(String(100), nullable=False)
+    vehicle_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    dataset_scope: Mapped[str] = mapped_column(String(80), nullable=False)
+    metadata_json: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+    ingestion_run_id: Mapped[str | None] = mapped_column(String(80))
+
+    @classmethod
+    def from_dto(cls, item: TrafficAggregate) -> "TrafficAggregateModel":
+        return cls(
+            natural_key=item.natural_key,
+            dataset_id=item.dataset_id,
+            source_record_id=item.source_record_id,
+            source_provider=item.source_provider,
+            source_country=item.source_country,
+            source_region=item.source_region,
+            source_location_id=item.source_location_id,
+            source_location_name=item.source_location_name,
+            period_start=datetime.fromisoformat(item.period_start),
+            period_end=datetime.fromisoformat(item.period_end),
+            temporal_granularity=item.temporal_granularity,
+            vehicle_category=item.vehicle_category,
+            vehicle_count=item.vehicle_count,
+            dataset_scope=item.dataset_scope.value,
+            metadata_json=item.metadata,
+            ingestion_run_id=item.ingestion_run_id,
+        )
+
+    def to_dto(self) -> TrafficAggregate:
+        return TrafficAggregate(
+            dataset_id=self.dataset_id,
+            source_record_id=self.source_record_id,
+            source_provider=self.source_provider,
+            source_country=self.source_country,
+            source_region=self.source_region,
+            source_location_id=self.source_location_id,
+            source_location_name=self.source_location_name,
+            period_start=self.period_start.isoformat(),
+            period_end=self.period_end.isoformat(),
+            temporal_granularity=self.temporal_granularity,
+            vehicle_category=self.vehicle_category,
+            vehicle_count=self.vehicle_count,
+            dataset_scope=DatasetScope(self.dataset_scope),
+            metadata=self.metadata_json,
+            ingestion_run_id=self.ingestion_run_id,
+        )
+
+
+class TrafficLocationModel(Base):
+    __tablename__ = "traffic_locations"
+    __table_args__ = (
+        UniqueConstraint(
+            "dataset_id", "source_location_id", name="uq_traffic_locations_dataset_source"
+        ),
+    )
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    dataset_id: Mapped[str] = mapped_column(String(100), nullable=False)
+    source_location_id: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(String(200), nullable=False)
+    type: Mapped[str] = mapped_column(String(80), nullable=False)
+    operator: Mapped[str | None] = mapped_column(String(250))
+    status: Mapped[str | None] = mapped_column(String(100))
+    geometry: Mapped[Any] = mapped_column(Geometry("POINT", srid=4326), nullable=False)
+    properties_json: Mapped[dict[str, Any]] = mapped_column(JSONB, default=dict)
+
+
+class DatasetIngestionRunModel(Base):
+    __tablename__ = "dataset_ingestion_runs"
+    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    dataset_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(40), nullable=False)
+    files_processed: Mapped[int] = mapped_column(Integer, default=0)
+    rows_read: Mapped[int] = mapped_column(Integer, default=0)
+    rows_valid: Mapped[int] = mapped_column(Integer, default=0)
+    rows_rejected: Mapped[int] = mapped_column(Integer, default=0)
+    rows_inserted: Mapped[int] = mapped_column(Integer, default=0)
+    rows_updated: Mapped[int] = mapped_column(Integer, default=0)
+    duplicates: Mapped[int] = mapped_column(Integer, default=0)
+    error_message: Mapped[str | None] = mapped_column(Text)
