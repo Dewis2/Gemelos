@@ -289,4 +289,3 @@ La instalación está correcta cuando:
 - El dashboard identifica el estado del backend.
 - La fuente histórica de Huancayo devuelve nueve registros.
 - Las pruebas automáticas terminan sin fallos.
-
