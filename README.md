@@ -87,6 +87,9 @@ scripts/       comandos auxiliares
 
 ## Instalación local
 
+Para preparar el proyecto en una PC nueva, consulte la
+[guía completa de instalación y ejecución local](docs/GUIA_INSTALACION_LOCAL.md).
+
 ```bash
 python -m venv .venv
 # Linux/macOS: source .venv/bin/activate
