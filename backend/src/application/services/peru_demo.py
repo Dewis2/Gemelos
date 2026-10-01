@@ -18,6 +18,7 @@ from application.ports.outbound import (
     TrafficAggregateRepositoryPort,
     TrafficDatasetPort,
 )
+from application.services.traffic_scope import TrafficScopeResolver
 
 
 class PeruDemoQueryService:
@@ -25,9 +26,12 @@ class PeruDemoQueryService:
         self,
         datasets: Mapping[str, TrafficDatasetPort],
         location_dataset: TrafficDatasetPort,
+        scopes: TrafficScopeResolver | None = None,
     ) -> None:
         self._datasets = dict(datasets)
         self._location_dataset = location_dataset
+        # Contexto Strategy. Puede inyectarse otro resolver para cambiar la politica.
+        self._scopes = TrafficScopeResolver() if scopes is None else scopes
 
     def list_datasets(self) -> list[dict[str, Any]]:
         return [adapter.get_metadata().to_dict() for adapter in self._datasets.values()]
@@ -101,12 +105,9 @@ class PeruDemoQueryService:
             ],
             "records": [item.to_dict() for item in measurements[:limit]],
             "source_label": f"Fuente: {adapter.get_source_name()}",
-            "warning": (
-                "Aforos históricos municipales. No representan tráfico actual de 2026."
-                if dataset_id == "huancayo_historical_counts_2013"
-                else "Demostración con datos históricos oficiales. No representa "
-                "tiempo real ni tráfico urbano de la Av. Ferrocarril."
-            ),
+            # Strategy: la politica de aviso la decide la estrategia aplicable al
+            # conjunto de datos, no un condicional dentro de este servicio.
+            "warning": self._scopes.resolve(dataset_id).warning(),
         }
 
     def junin(self) -> dict[str, Any]:

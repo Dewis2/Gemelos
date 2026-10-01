@@ -26,8 +26,12 @@ class RecordingPublisher:
 
 class ConstantModel:
     def predict_traffic(self, features: dict[str, float]) -> tuple[float, str]:
-        assert features["hour"] == 8
+        assert features["hour"] == 8.0
+        assert set(features) == {"day_of_week", "hour", "is_weekend", "month"}
         return 42.0, "test-model"
+
+
+VALID_FEATURES = {"day_of_week": 0, "hour": 8, "is_weekend": 0, "month": 10}
 
 
 def test_register_measurement_persists_and_publishes() -> None:
@@ -41,11 +45,12 @@ def test_register_measurement_persists_and_publishes() -> None:
 
 def test_predict_traffic_uses_port_and_saves_prediction() -> None:
     store = InMemoryStore()
+    intersections, segment = make_network()
+    store.intersections.extend(intersections)
+    store.segments.append(segment)
     target = datetime.now(UTC) + timedelta(hours=1)
-    request = PredictionRequest(
-        make_measurement().road_segment_id, target, {"hour": 8.0}
-    )
-    prediction = PredictTrafficFlow(ConstantModel(), store).execute(request)
+    request = PredictionRequest(segment.id, target, VALID_FEATURES)
+    prediction = PredictTrafficFlow(ConstantModel(), store, store).execute(request)
     assert prediction.predicted_volume == 42.0
     assert prediction.model_version == "test-model"
     assert store.predictions == [prediction]

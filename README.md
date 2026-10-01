@@ -54,6 +54,149 @@ implementaciones. `ApplicationContainer` es la raíz de composición que conecta
 adaptadores, por lo que cambiar PostgreSQL, el modelo ML, la fuente o SUMO no obliga
 a modificar el dominio.
 
+## Architecture patterns used
+
+### Repository
+
+| Elemento | Archivo |
+|---|---|
+| Puertos (contratos) | `backend/src/application/ports/outbound/ports.py` |
+| Puertos de agregados de demo | `backend/src/application/ports/outbound/traffic_dataset_port.py` |
+| Implementación en memoria | `backend/src/adapters/outbound/persistence/memory.py` (`InMemoryStore`) |
+| Implementación SQLAlchemy | `backend/src/adapters/outbound/persistence/sqlalchemy_repository.py` |
+| Implementación de agregados | `backend/src/adapters/outbound/persistence/demo_repository.py` |
+
+Los casos de uso reciben `TrafficRepository`, `PredictionRepository`,
+`ScenarioRepository`, `SimulationRepository` y `RoadNetworkRepository` como `Protocol`,
+nunca como clases concretas.
+
+### Dependency Injection
+
+| Elemento | Archivo |
+|---|---|
+| Raíz de composición (backend) | `backend/src/adapters/inbound/api/container.py` (`ApplicationContainer`) |
+| Proveedor para FastAPI | `backend/src/adapters/inbound/api/dependencies.py` (`get_container`) |
+| Composición del frontend | `frontend/src/presentation/ApplicationContext.tsx` |
+| Aplicación de cliente | `frontend/src/application/DigitalTwinApplication.ts` |
+
+El contenedor instancia los adaptadores y los inyecta en los casos de uso; el frontend
+compone `FetchDigitalTwinGateway` detrás de `DigitalTwinGateway`. No hay
+`new` de infraestructura dentro de la lógica de negocio.
+
+### Factory Method
+
+| Elemento | Archivo |
+|---|---|
+| Fábrica de persistencia | `backend/src/adapters/outbound/persistence/factory.py` (`build_traffic_aggregate_repository`) |
+| Fábrica de adaptadores de dataset | `backend/src/adapters/outbound/datasets/__init__.py` y `backend/src/application/cli.py` (`adapters(root)`) |
+| Fábrica de la topología del corredor | `backend/src/infrastructure/corridor_reference.py` (`build_corridor`) |
+
+`build_traffic_aggregate_repository("memory" \| "sqlalchemy")` sustituye la rama
+condicional que antes tenía el composition root, de modo que elegir persistencia no
+requiere tocar `HistoricalReplayService` ni el caso de uso.
+
+### Strategy
+
+Strategy se aplica a la **política de ámbito** de cada conjunto de datos de tráfico:
+si una respuesta corresponde al aforo histórico local de Huancayo o a una fuente
+oficial regional, y qué advertencia debe acompañarla.
+
+| Elemento | Archivo / clase | Responsabilidad |
+|---|---|---|
+| Abstracción Strategy | `backend/src/application/services/traffic_scope.py` (`TrafficScopeStrategy`, `Protocol`) | Define `key`, `admits(dataset_id)` y `warning()` |
+| Estrategia concreta 1 | `backend/src/application/services/traffic_scope.py` (`LocalHistoricalScope`) | Aplica al aforo municipal de 2013; advierte que no representa tráfico actual |
+| Estrategia concreta 2 | `backend/src/application/services/traffic_scope.py` (`NationalDemoScope`) | Aplica a MTC y OSITRAN; advierte que no son tráfico urbano del corredor |
+| Contexto (selección e intercambio) | `backend/src/application/services/traffic_scope.py` (`TrafficScopeResolver`) | Elige la primera estrategia que admite el conjunto y permite `register(...)` en tiempo de ejecución |
+| Consumidor del contexto | `backend/src/application/services/peru_demo.py` (`PeruDemoQueryService.traffic`) | Delega la advertencia a la estrategia resuelta |
+| Pruebas | `backend/tests/unit/test_traffic_scope_strategy.py` | Demuestran selección e intercambio |
+
+Esta política estaba antes incrustada como condicional dentro de
+`PeruDemoQueryService.traffic`; el refactor no cambia ninguna respuesta, solo hace
+explícita la decisión y permite cambiarla sin tocar el servicio.
+
+**Diferencia con Adapter y Dependency Injection.** `TrafficSimulatorPort`
+(`FakeTrafficSimulator` / `SumoTrafficSimulator`) y `EventPublisherPort`
+(`LoggingEventPublisher` / `MqttEventPublisher`) son adaptadores intercambiables
+elegidos **una vez** en la raíz de composición: eso es Adapter + DI, no Strategy.
+Strategy exige un contexto que **selecciona** entre estrategias en cada petición, como
+hace `TrafficScopeResolver` con `admits(dataset_id)`.
+
+### Adapter
+
+| Elemento | Archivo |
+|---|---|
+| Entrada REST | `backend/src/adapters/inbound/api/routes.py`, `schemas.py` |
+| Entrada MQTT | `backend/src/adapters/inbound/mqtt/consumer.py` |
+| Salida ML (joblib) | `backend/src/adapters/outbound/ml/joblib_model.py` |
+| Salida SUMO/TraCI | `backend/src/adapters/outbound/sumo/` |
+| Salida de persistencia | `backend/src/adapters/outbound/persistence/` |
+| Salida de fuentes | `backend/src/adapters/outbound/datasets/` |
+| Salida MQTT | `backend/src/adapters/outbound/mqtt/publisher.py` |
+
+## Unit tests with Fakes/Mocks
+
+Las pruebas de la capa Application se ejecutan **sin PostgreSQL, sin MQTT y sin
+servicios externos**: todos los puertos de salida se sustituyen por dobles en memoria.
+
+| Prueba | Qué demuestra |
+|---|---|
+| `tests/unit/test_use_cases_with_fakes.py::test_prediction_delegates_to_the_port_and_persists` | `PredictTrafficFlow` depende del `MachineLearningPort` y del `PredictionRepository`, no de joblib ni de SQLAlchemy; usa `FakeMachineLearningModel` e `InMemoryStore` |
+| `::test_invalid_features_are_rejected_before_calling_the_model` (9 casos) | La regla de negocio del contrato del modelo se ejecuta **antes** de la inferencia; con fakes se comprueba que el modelo no se invoca y que no se persiste nada |
+| `::test_prediction_rejects_unknown_road_segment` | El caso de uso valida contra `RoadNetworkRepository` sin tocar la base de datos |
+| `::test_prediction_failure_does_not_persist_a_partial_result` | Un fallo del adaptador de ML no deja predicciones parciales |
+| `::test_register_measurement_persists_through_the_repository_port` | `RegisterTrafficMeasurement` persiste y publica con `FakeEventPublisher`, sin broker |
+| `::test_repository_returns_latest_measurements_in_reverse_chronology` | Comportamiento del repositorio en memoria |
+| `::test_domain_rejects_invalid_measurement_state` | Invariantes del dominio sin infraestructura |
+| `::test_scenario_run_persists_one_row_per_segment` | Orquestación de escenario con `FakeTrafficSimulator`, sin SUMO |
+| `::test_factory_returns_memory_repository_by_default` / `::test_factory_rejects_unknown_persistence` | El Factory Method decide la implementación y falla de forma explícita |
+| `tests/unit/test_traffic_scope_strategy.py::test_registering_a_new_strategy_changes_the_selection_at_runtime` | El contexto Strategy cambia la estrategia seleccionada en tiempo de ejecución |
+| `::test_service_warning_changes_when_the_strategy_is_swapped` | El intercambio se propaga al servicio real sin alterar el resto del resultado |
+
+Además, `backend/tests/unit/datasets/` comprueba el aislamiento entre fuentes y el
+replay histórico, y `backend/tests/integration/test_api.py` cubre los códigos HTTP
+(201 predicción, 422 variables inválidas, 404 tramo desconocido, 503 modelo ausente)
+con `TestClient` y el contenedor de pruebas.
+
+Ejecución:
+
+```bash
+python -m pytest backend/tests -q   # no requiere Docker ni base de datos
+```
+
+## Trazabilidad de una predicción
+
+Cada salto del recorrido es localizable en el código:
+
+| # | Paso | Archivo / clase |
+|---|---|---|
+| 1 | Usuario / Frontend | `frontend/src/presentation/pages/PredictionPage.tsx` |
+| 2 | Aplicación de cliente | `frontend/src/application/DigitalTwinApplication.ts` (`predictTraffic`) |
+| 3 | Controller / Adapter IN | `backend/src/adapters/inbound/api/routes.py` (`predict_traffic`) y `schemas.py` (`PredictionCreate`) |
+| 4 | Input Port | `backend/src/application/ports/inbound/use_cases.py` (`PredictionCommand`) |
+| 5 | Use Case | `backend/src/application/use_cases/predictions.py` (`PredictTrafficFlow`) |
+| 6 | Servicio IA (puerto) | `backend/src/application/ports/outbound/ports.py` (`MachineLearningPort`) |
+| 7 | Adapter OUT de IA | `backend/src/adapters/outbound/ml/joblib_model.py` (`JoblibTrafficModel`) |
+| 8 | Regla de negocio | `backend/src/domain/value_objects/traffic_features.py` (`TrafficFeatures`) |
+| 9 | Output Port | `PredictionRepository` y `RoadNetworkRepository` en `ports/outbound/ports.py` |
+| 10 | Adapter OUT / Persistencia | `backend/src/adapters/outbound/persistence/memory.py` o `sqlalchemy_repository.py` |
+| 11 | Respuesta | `PredictionResponse` en `schemas.py` → `PredictionPage` |
+
+El orden alfabético de las variables de entrada es parte del contrato: el paso 7
+construye el vector con `sorted(features)`, igual que el entrenamiento.
+
+Recorrido equivalente de una consulta de tráfico, donde se ve el Strategy:
+
+```text
+GET /api/v1/demo/peru/traffic?dataset_id=...
+  -> routes.py (Adapter IN)                          TrafficDatasetPort
+  -> PeruDemoQueryService.traffic                    contexto
+  -> TrafficScopeResolver.resolve(dataset_id)        Strategy: selecciona
+  -> LocalHistoricalScope | NationalDemoScope         Strategy: ejecuta
+  -> TrafficDatasetPort.stream_measurements          Adapter OUT
+  -> TrafficAggregateRepositoryPort.add              Repository
+  -> respuesta con la advertencia de la estrategia
+```
+
 ## Stack
 
 - Python 3.12+, FastAPI, Pydantic, SQLAlchemy y Alembic.

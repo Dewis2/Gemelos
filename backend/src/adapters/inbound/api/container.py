@@ -13,8 +13,7 @@ from adapters.outbound.ml import JoblibTrafficModel
 from adapters.outbound.mqtt import LoggingEventPublisher, MqttEventPublisher
 from adapters.outbound.persistence import (
     InMemoryStore,
-    InMemoryTrafficAggregateRepository,
-    SqlAlchemyTrafficAggregateRepository,
+    build_traffic_aggregate_repository,
 )
 from adapters.outbound.sumo import FakeTrafficSimulator
 from application.ports.outbound import EventPublisherPort, TrafficAggregateRepositoryPort
@@ -49,7 +48,7 @@ class ApplicationContainer:
         self.register_measurement = RegisterTrafficMeasurement(self.store, publisher)
         self.get_network = GetRoadNetwork(self.store)
         self.get_twin_state = GetDigitalTwinState(self.store, self.store)
-        self.predict_traffic = PredictTrafficFlow(model, self.store)
+        self.predict_traffic = PredictTrafficFlow(model, self.store, self.store)
         self.create_scenario = CreateSimulationScenario(self.store)
         self.run_scenario = RunSimulationScenario(self.store, self.store, self.store, simulator)
         self.get_simulation_results = GetSimulationResults(self.store)
@@ -78,11 +77,9 @@ class ApplicationContainer:
             mtc_locations,
         )
 
-        demo_repository: TrafficAggregateRepositoryPort = InMemoryTrafficAggregateRepository()
-        if settings.demo_repository == "sqlalchemy":
-            from infrastructure.database.session import SessionFactory
-
-            demo_repository = SqlAlchemyTrafficAggregateRepository(SessionFactory)
+        demo_repository: TrafficAggregateRepositoryPort = build_traffic_aggregate_repository(
+            settings.demo_repository
+        )
 
         self.mqtt_client: mqtt.Client | None = None
         mqtt_active = False

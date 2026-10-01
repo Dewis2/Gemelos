@@ -21,7 +21,7 @@ from adapters.inbound.api.schemas import (
 from adapters.outbound.ml.joblib_model import ModelNotReadyError
 from application.dto import PredictionRequest
 from domain.entities import SimulationScenario, TrafficMeasurement
-from domain.exceptions import EntityNotFoundError
+from domain.exceptions import DomainValidationError, EntityNotFoundError
 
 Container = Annotated[ApplicationContainer, Depends(get_container)]
 router = APIRouter()
@@ -198,6 +198,14 @@ def predict_traffic(payload: PredictionCreate, container: Container) -> Any:
     except ModelNotReadyError as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
+    except DomainValidationError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)
+        ) from exc
+    except EntityNotFoundError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
         ) from exc
 
 

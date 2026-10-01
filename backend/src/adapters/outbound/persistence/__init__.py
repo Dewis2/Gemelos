@@ -1,3 +1,10 @@
+from adapters.outbound.persistence.demo_repository import (
+    InMemoryTrafficAggregateRepository,
+    SqlAlchemyIngestionRunRecorder,
+    SqlAlchemyTrafficAggregateRepository,
+    SqlAlchemyTrafficLocationRepository,
+)
+from adapters.outbound.persistence.factory import build_traffic_aggregate_repository
 from adapters.outbound.persistence.memory import InMemoryStore
 from adapters.outbound.persistence.sqlalchemy_repository import (
     SqlAlchemyPredictionRepository,
@@ -9,23 +16,14 @@ from adapters.outbound.persistence.sqlalchemy_repository import (
 
 __all__ = [
     "InMemoryStore",
+    "InMemoryTrafficAggregateRepository",
+    "SqlAlchemyIngestionRunRecorder",
     "SqlAlchemyPredictionRepository",
     "SqlAlchemyRoadNetworkRepository",
     "SqlAlchemyScenarioRepository",
     "SqlAlchemySimulationRepository",
-    "SqlAlchemyTrafficRepository",
-]
-from adapters.outbound.persistence.demo_repository import (
-    InMemoryTrafficAggregateRepository,
-    SqlAlchemyIngestionRunRecorder,
-    SqlAlchemyTrafficAggregateRepository,
-    SqlAlchemyTrafficLocationRepository,
-)
-
-__all__ = [
-    "InMemoryStore",
-    "InMemoryTrafficAggregateRepository",
-    "SqlAlchemyIngestionRunRecorder",
     "SqlAlchemyTrafficAggregateRepository",
     "SqlAlchemyTrafficLocationRepository",
+    "SqlAlchemyTrafficRepository",
+    "build_traffic_aggregate_repository",
 ]

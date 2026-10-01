@@ -28,16 +28,58 @@ def test_register_measurement_changes_twin_state(client: TestClient) -> None:
 
 
 def test_prediction_fails_clearly_without_trained_model(client: TestClient) -> None:
+    segment = client.get("/api/v1/road-segments").json()[0]
+    response = client.post(
+        "/api/v1/predictions/traffic-flow",
+        json={
+            "road_segment_id": segment["id"],
+            "target_timestamp": datetime.now(UTC).isoformat(),
+            "features": {"day_of_week": 3, "hour": 8, "is_weekend": 0, "month": 10},
+        },
+    )
+    assert response.status_code == 503
+    assert "No trained model" in response.json()["detail"]
+
+
+def test_prediction_rejects_incomplete_features(client: TestClient) -> None:
+    segment = client.get("/api/v1/road-segments").json()[0]
+    response = client.post(
+        "/api/v1/predictions/traffic-flow",
+        json={
+            "road_segment_id": segment["id"],
+            "target_timestamp": datetime.now(UTC).isoformat(),
+            "features": {"hour": 8},
+        },
+    )
+    assert response.status_code == 422
+    assert "Faltan variables de entrada del modelo" in response.json()["detail"]
+
+
+def test_prediction_rejects_out_of_range_feature(client: TestClient) -> None:
+    segment = client.get("/api/v1/road-segments").json()[0]
+    response = client.post(
+        "/api/v1/predictions/traffic-flow",
+        json={
+            "road_segment_id": segment["id"],
+            "target_timestamp": datetime.now(UTC).isoformat(),
+            "features": {"day_of_week": 3, "hour": 99, "is_weekend": 0, "month": 10},
+        },
+    )
+    assert response.status_code == 422
+    assert "hour" in response.json()["detail"]
+
+
+def test_prediction_rejects_unknown_road_segment(client: TestClient) -> None:
     response = client.post(
         "/api/v1/predictions/traffic-flow",
         json={
             "road_segment_id": str(uuid4()),
             "target_timestamp": datetime.now(UTC).isoformat(),
-            "features": {"hour": 8},
+            "features": {"day_of_week": 3, "hour": 8, "is_weekend": 0, "month": 10},
         },
     )
-    assert response.status_code == 503
-    assert "No trained model" in response.json()["detail"]
+    assert response.status_code == 404
+    assert "no está registrado en la red del corredor" in response.json()["detail"]
 
 
 def test_road_segments_expose_the_corridor(client: TestClient) -> None:
