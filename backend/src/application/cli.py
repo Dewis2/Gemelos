@@ -9,6 +9,7 @@ from collections import Counter, defaultdict
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+from uuid import UUID
 
 from adapters.outbound.datasets import (
     HuancayoHistoricalAdapter,
@@ -343,6 +344,10 @@ def ingest(
     limit: int | None,
 ) -> dict[str, Any]:
     validation = adapter.validate()
+    # Se anotan antes de cualquier rama porque las dos rutas de persistencia
+    # comparten estas variables. No altera el flujo: solo fija el tipo declarado.
+    run_recorder: SqlAlchemyIngestionRunRecorder | None = None
+    run_id: UUID | None = None
     if isinstance(adapter, MtcTollLocationAdapter):
         locations = adapter.get_locations()
         if dry_run:
@@ -410,9 +415,6 @@ def ingest(
         persistence = "postgresql"
         run_recorder = SqlAlchemyIngestionRunRecorder(SessionFactory)
         run_id = run_recorder.start(adapter.get_metadata().dataset_id)
-    else:
-        run_recorder = None
-        run_id = None
     counters: Counter[str] = Counter(repository.upsert(item) for item in measurements)
     result = {
         "dataset_id": adapter.get_metadata().dataset_id,

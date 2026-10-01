@@ -30,6 +30,7 @@ from application.use_cases import (
     RunSimulationScenario,
 )
 from infrastructure.config import Settings
+from infrastructure.corridor_reference import build_corridor
 
 
 class ApplicationContainer:
@@ -37,6 +38,10 @@ class ApplicationContainer:
 
     def __init__(self, settings: Settings) -> None:
         self.store = InMemoryStore()
+        nodes, segments = build_corridor()
+        self.store.intersections.extend(nodes)
+        self.store.segments.extend(segments)
+
         publisher = LoggingEventPublisher()
         simulator = FakeTrafficSimulator()
         model = JoblibTrafficModel(settings.ml_model_path)

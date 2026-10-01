@@ -37,9 +37,11 @@ services:
       DATA_ROOT: /data
       DEMO_REPOSITORY: sqlalchemy
       DEMO_ML_METADATA_PATH: /models/demo_peru/metadata.json
+      ML_MODEL_PATH: /app/models/traffic_model.joblib
     volumes:
       - ./data:/data
       - ./ml/models/demo_peru:/models/demo_peru:ro
+      - ./ml/models:/app/models:ro
     ports:
       - "8000:8000"
     depends_on:

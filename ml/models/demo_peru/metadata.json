@@ -1,173 +1,119 @@
 {
-  "experiment": "peru_toll_traffic_next_period",
-  "scope": "national_toll_demo_only",
-  "warning": "Modelo experimental entrenado con datos nacionales de peaje; no es un modelo predictivo de la Av. Ferrocarril.",
-  "training_dataset": "mtc_peru_toll_flow",
-  "provider": "Ministerio de Transportes y Comunicaciones - MTC",
-  "created_at": "2026-09-11T21:22:25.693036+00:00",
+  "experiment": "mitv_hourly_traffic_volume",
+  "scope": "external_academic_benchmark",
+  "warning": "Modelo experimental de PoC entrenado con MITV-UCI (Metro Interstate Traffic Volume, Minnesota, EE. UU.). Corresponde a otro contexto geográfico: no ha sido validado con datos locales actuales de la Av. Ferrocarril y no representa tráfico de Huancayo.",
+  "training_dataset": "mitv_uci_metro_interstate",
+  "provider": "UCI Machine Learning Repository",
+  "source_url": "https://archive.ics.uci.edu/static/public/492/metro+interstate+traffic+volume.zip",
+  "license": "CC BY 4.0 (UCI)",
+  "created_at": "2026-10-01T17:47:35.409308+00:00",
+  "geography": "Minnesota, EE. UU.",
+  "rows_total": 48204,
+  "temporal_granularity": "hour",
+  "timestamp_column": "date_time",
+  "target": "traffic_volume (veh/h)",
+  "target_min": 0,
+  "target_max": 7280,
   "training_period": {
-    "min": "2014-02",
-    "max": "2023-09"
+    "min": "2012-10",
+    "max": "2017-11"
   },
   "test_period": {
-    "min": "2023-10",
-    "max": "2026-03"
+    "min": "2017-11",
+    "max": "2018-09"
   },
   "temporal_split": true,
-  "train_rows": 8946,
-  "test_rows": 2340,
+  "train_rows": 38563,
+  "test_rows": 9641,
   "features": [
-    "month",
-    "year",
-    "CODIGO_PEAJE",
-    "lag_1",
-    "lag_2",
-    "lag_3",
-    "rolling_mean_3"
+    "day_of_week",
+    "hour",
+    "is_weekend",
+    "month"
   ],
-  "target": "traffic_volume_next_month",
+  "selected_model": "random_forest",
+  "model_artifact": "ml/models/traffic_model.joblib",
+  "model_version": "random-forest-mitv-20261001",
   "metrics": {
-    "naive_y_t_plus_1_equals_y_t": {
-      "mae": 8309.336324786325,
-      "rmse": 20656.150233000597,
-      "r2": 0.9755975898333492,
+    "random_forest": {
+      "mae": 299.5426711587327,
+      "rmse": 534.3456366672448,
+      "r2": 0.9262536729846942,
       "mape": null
     },
     "linear_regression": {
-      "mae": 9157.049050712767,
-      "rmse": 21611.725046402757,
-      "r2": 0.9732876053264361,
-      "mape": null
-    },
-    "random_forest": {
-      "mae": 7083.463685906653,
-      "rmse": 17657.61114047921,
-      "r2": 0.982168090455205,
+      "mae": 1581.1998149058397,
+      "rmse": 1789.0046313070147,
+      "r2": 0.17335548245769516,
       "mape": null
     }
   },
-  "selected_model": "random_forest",
+  "prediction_series_aggregation": "monthly_mean",
   "prediction_series": [
     {
-      "period": "2024-04",
-      "actual": 6798839.0,
-      "predicted": 6641100.65
+      "period": "2017-11",
+      "actual": 3314.03,
+      "predicted": 3110.32
     },
     {
-      "period": "2024-05",
-      "actual": 6539212.0,
-      "predicted": 6653281.89
+      "period": "2017-12",
+      "actual": 3158.15,
+      "predicted": 3047.96
     },
     {
-      "period": "2024-06",
-      "actual": 7542485.0,
-      "predicted": 6982509.36
+      "period": "2018-01",
+      "actual": 3064.75,
+      "predicted": 3085.63
     },
     {
-      "period": "2024-07",
-      "actual": 7652048.0,
-      "predicted": 7434062.08
+      "period": "2018-02",
+      "actual": 3148.78,
+      "predicted": 3199.57
     },
     {
-      "period": "2024-08",
-      "actual": 6990076.0,
-      "predicted": 7322327.4
+      "period": "2018-03",
+      "actual": 3317.18,
+      "predicted": 3358.77
     },
     {
-      "period": "2024-09",
-      "actual": 7455028.0,
-      "predicted": 7374412.78
+      "period": "2018-04",
+      "actual": 3095.33,
+      "predicted": 3377.64
     },
     {
-      "period": "2024-10",
-      "actual": 7319934.0,
-      "predicted": 7259495.27
+      "period": "2018-05",
+      "actual": 3317.25,
+      "predicted": 3341.02
     },
     {
-      "period": "2024-11",
-      "actual": 8392697.0,
-      "predicted": 7603136.66
+      "period": "2018-06",
+      "actual": 3444.64,
+      "predicted": 3493.3
     },
     {
-      "period": "2024-12",
-      "actual": 8742958.0,
-      "predicted": 8233005.57
+      "period": "2018-07",
+      "actual": 3236.65,
+      "predicted": 3217.54
     },
     {
-      "period": "2025-01",
-      "actual": 7863384.0,
-      "predicted": 7895789.28
+      "period": "2018-08",
+      "actual": 3398.88,
+      "predicted": 3397.77
     },
     {
-      "period": "2025-02",
-      "actual": 7937803.0,
-      "predicted": 7548292.7
-    },
-    {
-      "period": "2025-03",
-      "actual": 7542242.0,
-      "predicted": 7507863.55
-    },
-    {
-      "period": "2025-04",
-      "actual": 7655055.0,
-      "predicted": 7503267.14
-    },
-    {
-      "period": "2025-05",
-      "actual": 7326749.0,
-      "predicted": 7555297.35
-    },
-    {
-      "period": "2025-06",
-      "actual": 8248523.0,
-      "predicted": 7884262.56
-    },
-    {
-      "period": "2025-07",
-      "actual": 8481553.0,
-      "predicted": 8173377.96
-    },
-    {
-      "period": "2025-08",
-      "actual": 7741401.0,
-      "predicted": 8119536.61
-    },
-    {
-      "period": "2025-09",
-      "actual": 8309735.0,
-      "predicted": 8089372.72
-    },
-    {
-      "period": "2025-10",
-      "actual": 8114202.0,
-      "predicted": 8052551.35
-    },
-    {
-      "period": "2025-11",
-      "actual": 9454204.0,
-      "predicted": 8414286.92
-    },
-    {
-      "period": "2025-12",
-      "actual": 9729950.0,
-      "predicted": 8962317.3
-    },
-    {
-      "period": "2026-01",
-      "actual": 8830694.0,
-      "predicted": 8674362.87
-    },
-    {
-      "period": "2026-02",
-      "actual": 7944696.0,
-      "predicted": 8590086.46
-    },
-    {
-      "period": "2026-03",
-      "actual": 68690.0,
-      "predicted": 97956.63
+      "period": "2018-09",
+      "actual": 3302.21,
+      "predicted": 3350.85
     }
   ],
-  "model_artifact": "ml\\models\\demo_peru\\random_forest.joblib"
+  "inference_contract": {
+    "endpoint": "/api/v1/predictions/traffic-flow",
+    "features": [
+      "day_of_week",
+      "hour",
+      "is_weekend",
+      "month"
+    ],
+    "note": "El backend construye el vector con sorted(features), por lo que el orden alfabético de estas variables es parte del contrato."
+  }
 }

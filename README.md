@@ -103,6 +103,37 @@ máquina. Nunca confirme `.env` en Git.
 
 ## Ejecución
 
+### Demostración del PMV1 con Docker (recomendado)
+
+Requiere **Docker Desktop** en ejecución y las variables de `.env` completas
+(`DATABASE_URL` y `POSTGRES_PASSWORD` son obligatorias).
+
+```bash
+# 1. Entrar al entorno virtual del proyecto
+.venv\Scripts\activate          # Windows PowerShell
+source .venv/bin/activate       # Linux / macOS
+
+# 2. Generar el modelo predictivo (descarga MITV-UCI y entrena)
+python -m ml.scripts.fetch_mitv
+python -m ml.scripts.train_and_publish
+
+# 3. Levantar el sistema completo
+docker compose up --build
+```
+
+| Servicio | URL |
+|---|---|
+| **Frontend (grabar aquí)** | http://localhost:5173 |
+| Backend / OpenAPI | http://localhost:8000/docs |
+| Healthcheck | http://localhost:8000/health |
+
+El paso 2 es necesario porque el artefacto `ml/models/traffic_model.joblib` está
+excluido de Git. Sin él, `POST /api/v1/predictions/traffic-flow` responde 503.
+Ambos scripts son idempotentes y reproducibles: el primero verifica el perfil del
+dataset y el segundo escribe el modelo y `metadata.json` con métricas de la corrida.
+
+### Ejecución del backend sin Docker
+
 Backend:
 
 ```bash
@@ -185,6 +216,30 @@ El CSV debe incluir `timestamp` y `traffic_volume` o indicar los nombres por fla
 Los artefactos pesados están ignorados. Sin un modelo presente, el endpoint responde
 503 con un mensaje explícito, en lugar de fabricar una predicción.
 
+### Experimento publicado del PMV1
+
+El modelo que sirve `POST /api/v1/predictions/traffic-flow` es un Random Forest
+entrenado sobre **MITV-UCI** (Metro Interstate Traffic Volume, Minnesota, EE. UU.,
+48 204 registros horarios, DOI `10.24432/C5X60B`) mediante el script reproducible:
+
+```bash
+python -m ml.scripts.fetch_mitv          # descarga y verifica el dataset externo
+python -m ml.scripts.train_and_publish   # entrena y publica modelo + metadata.json
+```
+
+El experimento usa las cuatro variables temporales `day_of_week`, `hour`, `is_weekend`
+y `month`. **El orden alfabético de esos nombres es parte del contrato**: el adaptador
+`JoblibTrafficModel` construye el vector con `sorted(features)`, y un orden distinto
+serviría predicciones incorrectas sin emitir error.
+
+> **Este modelo es una PoC técnica.** Sus observaciones pertenecen a Minnesota, EE. UU.
+> No ha sido validado con datos locales actuales de la Av. Ferrocarril y sus volúmenes
+> **no son comparables** con los aforos municipales de Huancayo de 2013.
+
+Además, como el modelo no incluye la vía como variable, **el resultado es idéntico para
+cualquier segmento del corredor**: el `road_segment_id` solo se exige por contrato del
+endpoint.
+
 ## Demo con datos oficiales del Perú
 
 La plataforma puede ejecutarse con datos históricos oficiales publicados por MTC y
@@ -237,6 +292,28 @@ Se separan tres niveles en [data/README.md](data/README.md):
 
 **Estos aforos son históricos y NO representan el tráfico de Huancayo en 2026.**
 
+## Corredor y topología del PMV1
+
+El backend siembra en memoria la estructura mínima del corredor mediante
+`backend/src/infrastructure/corridor_reference.py`, conectada en el composition root.
+Aporta cuatro nodos y tres tramos con UUID deterministas (`uuid5`):
+
+| Tramo | Puntos de aforo asociados |
+|---|---|
+| Av. Ferrocarril · tramo norte | P03, P04 |
+| Av. Ferrocarril · tramo centro | — |
+| Av. Ferrocarril · tramo sur | P42 |
+
+La segmentación es **técnica del PMV**, no una división oficial del municipio:
+
+- `geometry` es `null` en todos los tramos y el mapa es un esquema sin coordenadas.
+- Los nodos intermedios son **límites técnicos**, no intersecciones ni semáforos verificados.
+- `lane_count` y `reference_speed` cumplen el mínimo que exige `RoadSegment`; son
+  **valores estructurales no validados en campo**, no atributos levantados en el sitio.
+- P03, P04 y P42 siguen siendo puntos de aforo histórico, no segmentos del gemelo.
+
+El sistema no dibuja geometría ficticia mientras la cartografía no esté validada.
+
 ## Roadmap
 
 ### PMV1 — Gemelo mínimo observable
@@ -257,8 +334,14 @@ dashboard final, reportes y documentación de evidencia.
 ## Limitaciones actuales
 
 - Topología, carriles, semáforos y geometría del corredor: pendientes de validación.
-- Datos locales actuales: pendientes.
-- Modelo entrenado y evaluación: pendientes.
+- Datos locales actuales: pendientes. Los nueve aforos disponibles son de 2013.
+- Modelo entrenado: disponible como PoC técnica sobre MITV-UCI (Minnesota). **No está
+  validado con datos locales de Huancayo** y no distingue segmentos del corredor.
+- Simulación: los escenarios se crean y se ejecutan, pero el adaptador activo no produce
+  métricas físicas; las cifras que devuelve son ceros por construcción y la interfaz las
+  marca como marcador de posición.
+- SUMO/TraCI: implementado como adaptador, no operativo (requiere topología validada y
+  un `.sumocfg`; no se incluye en el contenedor).
 - Integración persistente seleccionada en runtime: pendiente; la PoC usa memoria.
 - Broker conectado al ciclo de vida de FastAPI: pendiente.
 - Calibración/validación SUMO, seguridad y rendimiento: por medir.

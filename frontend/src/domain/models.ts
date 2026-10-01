@@ -1,3 +1,6 @@
+import type { ModelFeatureValues } from "./corridor";
+import type { ScenarioConfiguration } from "./scenarios";
+
 export interface HealthStatus {
   status: string;
   stage: string;
@@ -17,11 +20,15 @@ export interface DatasetMetadata {
   title: string;
   provider: string;
   country: string;
+  source_type: string;
   temporal_granularity: string;
   spatial_granularity: string;
   period_min: string | null;
   period_max: string | null;
   license: string;
+  source_page: string;
+  local_validation: boolean;
+  allowed_uses: Record<string, boolean>;
   limitations: string[];
 }
 
@@ -47,10 +54,20 @@ export interface TrafficRecord {
   vehicle_category: string;
   vehicle_count: number;
   dataset_scope: string;
+  metadata: Record<string, unknown>;
+}
+
+export interface TrafficQueryFilters {
+  region: string | null;
+  location_id: string | null;
+  start_period: string | null;
+  end_period: string | null;
+  vehicle_category: string | null;
 }
 
 export interface TrafficQueryResult {
   dataset: DatasetMetadata;
+  filters: TrafficQueryFilters;
   record_count: number;
   records_returned: number;
   total_vehicles: number;
@@ -100,7 +117,20 @@ export interface ReplayCommand {
 export interface DemoMlResult {
   warning: string;
   training_dataset: string;
+  provider?: string;
+  experiment?: string;
+  scope?: string;
+  target?: string;
+  features?: string[];
+  created_at?: string;
+  temporal_split?: boolean;
+  train_rows?: number;
+  test_rows?: number;
+  model_artifact?: string;
   selected_model: string;
+  model_version?: string;
+  rows_total?: number;
+  geography?: string;
   training_period: { min: string; max: string };
   test_period: { min: string; max: string };
   metrics: Record<string, { mae: number; rmse: number; r2: number; mape: number | null }>;
@@ -120,7 +150,7 @@ export interface RoadSegment {
 export interface PredictionCommand {
   roadSegmentId: string;
   targetTimestamp: string;
-  features: Record<string, number>;
+  features: ModelFeatureValues;
 }
 
 export interface TrafficPrediction {
@@ -135,7 +165,7 @@ export interface TrafficPrediction {
 export interface ScenarioCommand {
   name: string;
   description: string;
-  configuration: Record<string, unknown>;
+  configuration: ScenarioConfiguration;
 }
 
 export interface SimulationScenario extends ScenarioCommand {

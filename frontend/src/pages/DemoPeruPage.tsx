@@ -3,6 +3,7 @@ import L from "leaflet";
 import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import type { DatasetMetadata, DemoMlResult, DemoState, TrafficLocation, TrafficQueryResult } from "../types/api";
 import { useApplication } from "../presentation/ApplicationContext";
+import { PredictionChart } from "../presentation/components/PredictionChart";
 
 const sourceNames: Record<string, string> = {
   mtc_peru_toll_flow: "MTC · Flujo vehicular",
@@ -26,13 +27,6 @@ function CategoryBars({ values }: { values: Record<string, number> }) {
   const max = Math.max(...entries.map(([, value]) => value), 1);
   if (!entries.length) return <p className="empty">Sin categorías disponibles.</p>;
   return <div className="bars">{entries.map(([name, value]) => <div key={name}><span>{name}</span><div><i style={{ width: `${(value / max) * 100}%` }} /></div><strong>{formatNumber.format(value)}</strong></div>)}</div>;
-}
-
-function PredictionChart({ data }: { data: DemoMlResult["prediction_series"] }) {
-  if (!data.length) return <p className="empty">Sin resultados de predicción.</p>;
-  const max = Math.max(...data.flatMap((item) => [item.actual, item.predicted]), 1);
-  const points = (field: "actual" | "predicted") => data.map((item, index) => `${(index / Math.max(data.length - 1, 1)) * 100},${48 - (item[field] / max) * 42}`).join(" ");
-  return <div className="chart-wrap prediction-chart"><svg viewBox="0 0 100 52" role="img" aria-label="Real histórico y predicción"><polyline className="actual" points={points("actual")} /><polyline className="predicted" points={points("predicted")} /></svg><div className="legend"><span>● Real histórico</span><span>● Predicción</span></div></div>;
 }
 
 export function DemoPeruPage() {
@@ -111,8 +105,8 @@ export function DemoPeruPage() {
   }));
 
   return <div className="demo-page">
-    <header className="demo-header"><div><p className="eyebrow">Datos oficiales históricos</p><h2>Modo Demo Perú</h2><p>Recorrido verificable desde el dataset oficial hasta el estado del gemelo digital.</p></div><span className="official-badge">DATOS OFICIALES DEL ESTADO PERUANO</span></header>
-    <div className="notice">Demostración con datos históricos oficiales. La reproducción se acelera con fines de demostración y no representa tiempo real.</div>
+    <header className="demo-header"><div><p className="eyebrow">Evidencia técnica</p><h2>Fuentes regionales y demostración técnica</h2><p>Recorrido verificable desde un dataset oficial regional hasta el estado del gemelo digital. No representa el corredor de la Av. Ferrocarril.</p></div><span className="official-badge">FUENTE REGIONAL · NO ES EL CORREDOR</span></header>
+    <div className="notice">Demostración con datos históricos oficiales regionales. La reproducción se acelera con fines de demostración y no representa tiempo real ni la movilidad de la Av. Ferrocarril.</div>
     {error && <div className="error-box">{error}</div>}
     <section className="control-panel">
       <label>Fuente<select value={datasetId} onChange={(event) => setDatasetId(event.target.value)}>{datasets.filter((item) => sourceNames[item.dataset_id]).map((item) => <option key={item.dataset_id} value={item.dataset_id}>{sourceNames[item.dataset_id]}</option>)}</select></label>

@@ -40,6 +40,25 @@ def test_prediction_fails_clearly_without_trained_model(client: TestClient) -> N
     assert "No trained model" in response.json()["detail"]
 
 
+def test_road_segments_expose_the_corridor(client: TestClient) -> None:
+    segments = client.get("/api/v1/road-segments")
+    nodes = client.get("/api/v1/intersections")
+    assert segments.status_code == 200
+    assert len(segments.json()) == 3
+    assert len(nodes.json()) == 4
+    names = [segment["name"] for segment in segments.json()]
+    assert all("Av. Ferrocarril" in name for name in names)
+    # La geometria sigue pendiente de validacion cartografica.
+    assert all(segment["geometry"] is None for segment in segments.json())
+
+
+def test_twin_state_counts_the_corridor(client: TestClient) -> None:
+    state = client.get("/api/v1/digital-twin/state").json()
+    assert state["road_segment_count"] == 3
+    assert state["intersection_count"] == 4
+    assert state["geometry_status"] == "pending_validation"
+
+
 def test_scenario_lifecycle(client: TestClient) -> None:
     created = client.post(
         "/api/v1/scenarios",
@@ -54,8 +73,21 @@ def test_scenario_lifecycle(client: TestClient) -> None:
     results = client.get(f"/api/v1/scenarios/{scenario_id}/results")
     assert created.status_code == 201
     assert run.status_code == 200
-    assert run.json() == []
-    assert results.json() == []
+
+    # El corredor ahora aporta segmentos, asi que la simulacion emite una fila por
+    # tramo. Los indicadores siguen en cero porque el adaptador de simulacion no
+    # calcula magnitudes fisicas; el frontend lo presenta como marcador de posicion.
+    segments = client.get("/api/v1/road-segments").json()
+    assert len(segments) == 3
+    assert len(run.json()) == len(segments)
+    assert results.json() == run.json()
+    for row, segment in zip(run.json(), segments, strict=True):
+        assert row["road_segment_id"] == segment["id"]
+        assert row["travel_time"] == 0.0
+        assert row["average_speed"] == 0.0
+        assert row["delay"] == 0.0
+        assert row["queue_length"] == 0.0
+        assert row["emissions"] == {}
 
 
 def test_compare_route_is_not_shadowed_by_scenario_id(client: TestClient) -> None:

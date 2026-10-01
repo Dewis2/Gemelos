@@ -1,0 +1,173 @@
+{
+  "experiment": "peru_toll_traffic_next_period",
+  "scope": "national_toll_demo_only",
+  "warning": "Modelo experimental entrenado con datos nacionales de peaje; no es un modelo predictivo de la Av. Ferrocarril.",
+  "training_dataset": "mtc_peru_toll_flow",
+  "provider": "Ministerio de Transportes y Comunicaciones - MTC",
+  "created_at": "2026-09-11T21:22:25.693036+00:00",
+  "training_period": {
+    "min": "2014-02",
+    "max": "2023-09"
+  },
+  "test_period": {
+    "min": "2023-10",
+    "max": "2026-03"
+  },
+  "temporal_split": true,
+  "train_rows": 8946,
+  "test_rows": 2340,
+  "features": [
+    "month",
+    "year",
+    "CODIGO_PEAJE",
+    "lag_1",
+    "lag_2",
+    "lag_3",
+    "rolling_mean_3"
+  ],
+  "target": "traffic_volume_next_month",
+  "metrics": {
+    "naive_y_t_plus_1_equals_y_t": {
+      "mae": 8309.336324786325,
+      "rmse": 20656.150233000597,
+      "r2": 0.9755975898333492,
+      "mape": null
+    },
+    "linear_regression": {
+      "mae": 9157.049050712767,
+      "rmse": 21611.725046402757,
+      "r2": 0.9732876053264361,
+      "mape": null
+    },
+    "random_forest": {
+      "mae": 7083.463685906653,
+      "rmse": 17657.61114047921,
+      "r2": 0.982168090455205,
+      "mape": null
+    }
+  },
+  "selected_model": "random_forest",
+  "prediction_series": [
+    {
+      "period": "2024-04",
+      "actual": 6798839.0,
+      "predicted": 6641100.65
+    },
+    {
+      "period": "2024-05",
+      "actual": 6539212.0,
+      "predicted": 6653281.89
+    },
+    {
+      "period": "2024-06",
+      "actual": 7542485.0,
+      "predicted": 6982509.36
+    },
+    {
+      "period": "2024-07",
+      "actual": 7652048.0,
+      "predicted": 7434062.08
+    },
+    {
+      "period": "2024-08",
+      "actual": 6990076.0,
+      "predicted": 7322327.4
+    },
+    {
+      "period": "2024-09",
+      "actual": 7455028.0,
+      "predicted": 7374412.78
+    },
+    {
+      "period": "2024-10",
+      "actual": 7319934.0,
+      "predicted": 7259495.27
+    },
+    {
+      "period": "2024-11",
+      "actual": 8392697.0,
+      "predicted": 7603136.66
+    },
+    {
+      "period": "2024-12",
+      "actual": 8742958.0,
+      "predicted": 8233005.57
+    },
+    {
+      "period": "2025-01",
+      "actual": 7863384.0,
+      "predicted": 7895789.28
+    },
+    {
+      "period": "2025-02",
+      "actual": 7937803.0,
+      "predicted": 7548292.7
+    },
+    {
+      "period": "2025-03",
+      "actual": 7542242.0,
+      "predicted": 7507863.55
+    },
+    {
+      "period": "2025-04",
+      "actual": 7655055.0,
+      "predicted": 7503267.14
+    },
+    {
+      "period": "2025-05",
+      "actual": 7326749.0,
+      "predicted": 7555297.35
+    },
+    {
+      "period": "2025-06",
+      "actual": 8248523.0,
+      "predicted": 7884262.56
+    },
+    {
+      "period": "2025-07",
+      "actual": 8481553.0,
+      "predicted": 8173377.96
+    },
+    {
+      "period": "2025-08",
+      "actual": 7741401.0,
+      "predicted": 8119536.61
+    },
+    {
+      "period": "2025-09",
+      "actual": 8309735.0,
+      "predicted": 8089372.72
+    },
+    {
+      "period": "2025-10",
+      "actual": 8114202.0,
+      "predicted": 8052551.35
+    },
+    {
+      "period": "2025-11",
+      "actual": 9454204.0,
+      "predicted": 8414286.92
+    },
+    {
+      "period": "2025-12",
+      "actual": 9729950.0,
+      "predicted": 8962317.3
+    },
+    {
+      "period": "2026-01",
+      "actual": 8830694.0,
+      "predicted": 8674362.87
+    },
+    {
+      "period": "2026-02",
+      "actual": 7944696.0,
+      "predicted": 8590086.46
+    },
+    {
+      "period": "2026-03",
+      "actual": 68690.0,
+      "predicted": 97956.63
+    }
+  ],
+  "model_artifact": "ml\\models\\demo_peru\\random_forest.joblib"
+}

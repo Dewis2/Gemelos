@@ -9,8 +9,8 @@ period_min: 2013
 period_max: 2013
 license: "NO DETERMINADO"
 source_page: "https://documentos.munihuancayo.gob.pe/documentos/servicios_publica/transito_transporte/plan_regulador_rutas.pdf"
-downloaded_at: 2026-09-11T21:17:33.346695+00:00
-checksum: 35b6830d6fe3b0ec8e5e3bfaa761ca005e8e2680b3d28a43dc8b98cff82479c1
+downloaded_at: 2026-10-01T15:34:01.281524+00:00
+checksum: dbf4387970f30f867ea2004aaf2734732680d3dd4fedaac1b3dcfa1ddfe05583
 local_validation: false
 allowed_uses:
   demo: true
