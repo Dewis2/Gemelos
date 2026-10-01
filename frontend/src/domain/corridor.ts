@@ -126,7 +126,7 @@ export const ML_INFERENCE_CONTRACT = {
   notValidatedNotice:
     "El modelo todavía no ha sido validado con datos locales actuales de la Av. Ferrocarril. Su predicción no representa tráfico de Huancayo.",
   datasetUnresolvedNotice:
-    "El conjunto de datos con el que se entrenará este modelo aún no está disponible en el repositorio, por lo que el origen del modelo no puede declararse aquí.",
+    "El modelo de IA fue entrenado con el dataset Metro Interstate Traffic Volume (MITV-UCI) del UCI Machine Learning Repository. Su validación con datos locales actuales de la Av. Ferrocarril sigue pendiente, por lo que los resultados deben considerarse experimentales.",
   segmentAgnosticNotice:
     "El modelo utiliza únicamente variables temporales y no diferencia los segmentos del corredor.",
 } as const;

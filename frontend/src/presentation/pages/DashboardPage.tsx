@@ -124,7 +124,7 @@ export function DashboardPage() {
       </section>
 
       <DataProvenanceNotice category="ml_experiment">
-        {ML_INFERENCE_CONTRACT.notValidatedNotice} {ML_INFERENCE_CONTRACT.datasetUnresolvedNotice}
+        {ML_INFERENCE_CONTRACT.datasetUnresolvedNotice}
       </DataProvenanceNotice>
 
       <section className="panel">

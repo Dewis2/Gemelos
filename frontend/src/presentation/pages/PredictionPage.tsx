@@ -119,7 +119,10 @@ export function PredictionPage() {
       </header>
 
       <DataProvenanceNotice category="ml_experiment">
-        {ML_INFERENCE_CONTRACT.notValidatedNotice} {ML_INFERENCE_CONTRACT.datasetUnresolvedNotice}
+        El modelo fue entrenado con el dataset Metro Interstate Traffic Volume (MITV-UCI) del UCI
+        Machine Learning Repository. No ha sido validado con datos locales actuales de la Av.
+        Ferrocarril, por lo que sus resultados son experimentales y no representan tráfico real de
+        Huancayo.
       </DataProvenanceNotice>
 
       <section className="panel">
