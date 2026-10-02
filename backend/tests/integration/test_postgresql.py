@@ -35,13 +35,16 @@ ROOT = Path(__file__).resolve().parents[3]
 def pg():
     url = os.environ.get("TEST_DATABASE_URL")
     if not url:
-        pytest.skip("Set TEST_DATABASE_URL to a dedicated migrated database ending in _test")
+        pytest.skip(
+            "Set TEST_DATABASE_URL to a dedicated migrated database ending in _test"
+        )
     if not (make_url(url).database or "").endswith("_test"):
         pytest.fail("Refusing to test against a database without the _test suffix")
     engine = create_engine(url, pool_pre_ping=True)
     factory = sessionmaker(engine, expire_on_commit=False)
     # Only test-owned application tables, never production or PostGIS catalogs.
     with engine.begin() as connection:
+        connection.execute(text("SET LOCAL lock_timeout = '5s'"))
         connection.execute(
             text(
                 "TRUNCATE simulation_results, traffic_predictions, traffic_measurements, "
@@ -90,7 +93,9 @@ def test_http_measurement_survives_restart_and_failed_fk(pg):
             timestamp=datetime.now(UTC).isoformat(),
             traffic_volume=17,
         )
-        assert client.post("/api/v1/traffic-measurements", json=payload).status_code == 409
+        assert (
+            client.post("/api/v1/traffic-measurements", json=payload).status_code == 409
+        )
         payload["source_id"] = str(TEST_SOURCE_ID)
         response = client.post("/api/v1/traffic-measurements", json=payload)
         assert response.status_code == 201
@@ -131,12 +136,19 @@ def test_http_scenario_results_survive_restart(pg):
         rows = restarted.get(f"/api/v1/scenarios/{identifier}/results").json()
         assert {row["id"] for row in rows} == ids
     with factory() as session:
-        assert session.get(SimulationScenarioModel, UUID(identifier)).configuration["steps"] == 2
+        assert (
+            session.get(SimulationScenarioModel, UUID(identifier)).configuration[
+                "steps"
+            ]
+            == 2
+        )
 
 
 def test_historical_query_uses_database_and_ingestion_is_idempotent(pg, monkeypatch):
     settings, factory = pg
-    adapter = HuancayoHistoricalAdapter(ROOT / "data/reference/huancayo_historical_counts.csv")
+    adapter = HuancayoHistoricalAdapter(
+        ROOT / "data/reference/huancayo_historical_counts.csv"
+    )
     repository = SqlAlchemyTrafficAggregateRepository(factory)
     rows = list(adapter.stream_measurements())
     assert len(rows) == 9
@@ -146,7 +158,9 @@ def test_historical_query_uses_database_and_ingestion_is_idempotent(pg, monkeypa
     def forbid_file_read(*args, **kwargs):
         raise AssertionError("The persistent query must not read the CSV")
 
-    monkeypatch.setattr(HuancayoHistoricalAdapter, "stream_measurements", forbid_file_read)
+    monkeypatch.setattr(
+        HuancayoHistoricalAdapter, "stream_measurements", forbid_file_read
+    )
     with TestClient(create_app(settings)) as client:
         response = client.get(
             "/api/v1/demo/peru/traffic",
@@ -165,7 +179,8 @@ def test_historical_query_uses_database_and_ingestion_is_idempotent(pg, monkeypa
             },
         ).json()
         assert all(
-            r["source_location_id"] == rows[0].source_location_id for r in filtered["records"]
+            r["source_location_id"] == rows[0].source_location_id
+            for r in filtered["records"]
         )
 
 
@@ -205,8 +220,13 @@ def test_postgis_round_trip(pg):
             text("UPDATE intersections SET geometry=ST_SetSRID(ST_MakePoint(0,0),4326)")
         )
     with factory() as session:
-        assert session.scalar(text("SELECT ST_SRID(geometry) FROM intersections LIMIT 1")) == 4326
         assert (
-            session.scalar(text("SELECT ST_AsText(geometry) FROM intersections LIMIT 1"))
+            session.scalar(text("SELECT ST_SRID(geometry) FROM intersections LIMIT 1"))
+            == 4326
+        )
+        assert (
+            session.scalar(
+                text("SELECT ST_AsText(geometry) FROM intersections LIMIT 1")
+            )
             == "POINT(0 0)"
         )

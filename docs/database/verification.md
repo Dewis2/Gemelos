@@ -57,3 +57,17 @@ Los resultados del simulador son marcadores de posición, no métricas físicas.
 MQTT y Docker no forman parte de esta ejecución. Persiste una advertencia de
 deprecación de Starlette/httpx. Reproducción: [testing.md](testing.md).
 Los logs y capturas originales se conservan localmente fuera del repositorio.
+
+## Validación previa al Pull Request
+
+La rama se integró con los cambios de main hasta fd7c3f3, conservando la fábrica de
+repositorios, la estrategia de procedencia y la validación de predicciones del equipo.
+La ejecución posterior aprobó 72 pruebas del proyecto, incluidas las seis pruebas
+PostgreSQL sobre una base independiente gemelos_pr_validation_test. Ruff, MyPy sobre
+77 archivos y la validación de arquitectura y compilación del frontend aprobaron.
+
+La comprobación global de Black configurada en CI ya presenta discrepancias en main:
+37 archivos no cumplen su formato por defecto. No se reformatearon en bloque archivos
+ajenos al módulo de base de datos. La suite PostgreSQL limita a cinco segundos la
+espera de bloqueo al limpiar la base de pruebas, para no quedar esperando una
+transacción abierta en pgAdmin. La instalación principal y esa sesión no se alteran.

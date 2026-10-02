@@ -31,8 +31,9 @@ def build_traffic_aggregate_repository(
     """Devuelve el repositorio de agregados segun la persistencia configurada.
 
     `memory` es el valor por defecto y no necesita sesion de base de datos. La rama
-    `sqlalchemy` importa el `SessionFactory` de infraestructura solo cuando se usa,
-    de modo que elegir memoria no cargue la configuracion de la base.
+    `sqlalchemy` usa la fabrica de sesiones inyectada por la aplicacion. Si se omite,
+    importa `SessionFactory` como alternativa para los clientes existentes. Elegir
+    memoria no carga la configuracion de la base.
     """
     key = (persistence or "memory").casefold()
     if key not in SUPPORTED_PERSISTENCIES:
