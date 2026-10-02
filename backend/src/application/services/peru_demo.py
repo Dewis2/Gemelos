@@ -32,6 +32,10 @@ class PeruDemoQueryService:
         self._location_dataset = location_dataset
         # Contexto Strategy. Puede inyectarse otro resolver para cambiar la politica.
         self._scopes = TrafficScopeResolver() if scopes is None else scopes
+        self._repository: TrafficAggregateRepositoryPort | None = None
+
+    def set_repository(self, repository: TrafficAggregateRepositoryPort) -> None:
+        self._repository = repository
 
     def list_datasets(self) -> list[dict[str, Any]]:
         return [adapter.get_metadata().to_dict() for adapter in self._datasets.values()]
@@ -69,15 +73,27 @@ class PeruDemoQueryService:
         limit: int = 500,
     ) -> dict[str, Any]:
         adapter = self._datasets[dataset_id]
-        measurements = list(
-            adapter.stream_measurements(
-                region=region,
-                location_id=location_id,
-                start_period=start_period,
-                end_period=end_period,
-                vehicle_category=vehicle_category,
+        if self._repository is None:
+            measurements = list(
+                adapter.stream_measurements(
+                    region=region,
+                    location_id=location_id,
+                    start_period=start_period,
+                    end_period=end_period,
+                    vehicle_category=vehicle_category,
+                )
             )
-        )
+        else:
+            measurements = [
+                item
+                for item in self._repository.list_by_dataset(dataset_id)
+                if (not region or (item.source_region or "").casefold() == region.casefold())
+                and (not location_id or item.source_location_id == location_id)
+                and (not start_period or item.period_start[: len(start_period)] >= start_period)
+                and (not end_period or item.period_start[: len(end_period)] <= end_period)
+                and (not vehicle_category or item.vehicle_category == vehicle_category)
+            ]
+            measurements.sort(key=lambda item: (item.period_start, item.natural_key))
         category_totals: dict[str, int] = defaultdict(int)
         series: dict[str, int] = defaultdict(int)
         contains_total = any(item.vehicle_category == "total" for item in measurements)
@@ -131,11 +147,11 @@ class PeruDemoQueryService:
         ]
         return {
             "junin_filter_available": bool(matched_flow or geo_locations),
-            "matched_records": len(
-                list(flow.stream_measurements(region="JUNIN", vehicle_category="total"))
-            )
-            if flow
-            else 0,
+            "matched_records": (
+                len(list(flow.stream_measurements(region="JUNIN", vehicle_category="total")))
+                if flow
+                else 0
+            ),
             "matched_toll_units": matched_units,
             "flow_locations": matched_flow,
             "geojson_locations": geo_locations,
@@ -351,6 +367,8 @@ class HistoricalReplayService:
 
     def stop(self) -> dict[str, Any]:
         self._stop.set()
+        if self._thread is not None and self._thread is not threading.current_thread():
+            self._thread.join()
         with self._lock:
             if self._state.status in {"running", "paused"}:
                 self._state.status = "stopped"

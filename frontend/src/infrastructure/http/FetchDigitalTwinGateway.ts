@@ -96,6 +96,11 @@ export class FetchDigitalTwinGateway implements DigitalTwinGateway {
     });
   }
 
+  listScenarios() { return this.request<SimulationScenario[]>("/api/v1/scenarios"); }
+  getScenarioResults(scenarioId: string) {
+    return this.request<SimulationResult[]>(`/api/v1/scenarios/${encodeURIComponent(scenarioId)}/results`);
+  }
+
   createScenario(command: ScenarioCommand) {
     return this.post<SimulationScenario>("/api/v1/scenarios", command);
   }

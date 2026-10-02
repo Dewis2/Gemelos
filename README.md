@@ -238,11 +238,12 @@ python -m venv .venv
 # Linux/macOS: source .venv/bin/activate
 # Windows PowerShell: .venv\Scripts\Activate.ps1
 python -m pip install -e "./backend[dev]"
-cp .env.example .env
+cp -n .env.local.example .env
 ```
 
-Cambie la contraseña local del ejemplo si el servicio será accesible fuera de la
-máquina. Nunca confirme `.env` en Git.
+Reemplace `CHANGE_ME` con su contraseña local y ajuste el puerto. Para trabajar
+sin PostgreSQL, configure `DEMO_REPOSITORY=memory`; para persistir la demostración,
+siga la [guía de base de datos](docs/database/README.md). Nunca confirme `.env` en Git.
 
 ## Ejecución
 
@@ -283,10 +284,10 @@ Backend:
 python -m uvicorn main:app --app-dir backend/src --reload
 ```
 
-Abra `http://localhost:8000/docs`. En la composición actual, la API usa el adaptador
-en memoria para poder arrancar sin servicios; el proceso pierde esos datos al cerrar.
-La migración PostGIS y sus adaptadores están preparados para conectarse en la siguiente
-iteración de la raíz de composición.
+Abra `http://localhost:8000/docs`. Las plantillas activan CORE_REPOSITORY=sqlalchemy
+y DEMO_REPOSITORY=sqlalchemy. Aplique las migraciones antes de iniciar la API.
+Cada operación usa su propia sesión PostgreSQL. Para trabajar sin base de datos,
+configure ambos valores como memory; ese modo pierde los datos al cerrar.
 
 Frontend:
 
@@ -305,6 +306,10 @@ black --check backend/src backend/tests ml/src ml/tests edge
 ```
 
 ## Docker y base de datos
+
+La guía específica de [base de datos](docs/database/README.md) incluye las once
+tablas, el modelo relacional, el diccionario y la instalación nativa o con Docker.
+Use `.env.local.example` para un backend nativo y `.env.example` para Compose.
 
 ```bash
 cp .env.example .env
@@ -437,7 +442,7 @@ Se separan tres niveles en [data/README.md](data/README.md):
 
 ## Corredor y topología del PMV1
 
-El backend siembra en memoria la estructura mínima del corredor mediante
+El backend siembra la estructura mínima del corredor mediante
 `backend/src/infrastructure/corridor_reference.py`, conectada en el composition root.
 Aporta cuatro nodos y tres tramos con UUID deterministas (`uuid5`):
 
@@ -485,8 +490,8 @@ dashboard final, reportes y documentación de evidencia.
   marca como marcador de posición.
 - SUMO/TraCI: implementado como adaptador, no operativo (requiere topología validada y
   un `.sumocfg`; no se incluye en el contenedor).
-- Integración persistente seleccionada en runtime: pendiente; la PoC usa memoria.
-- Broker conectado al ciclo de vida de FastAPI: pendiente.
+- Persistencia configurable con CORE_REPOSITORY y DEMO_REPOSITORY; plantillas PostgreSQL.
+- MQTT es opcional; el cliente se cierra al terminar FastAPI. No se validó el broker en la instalación nativa.
 - Calibración/validación SUMO, seguridad y rendimiento: por medir.
 - El mapa muestra un aviso y no dibuja geometría ficticia.
 

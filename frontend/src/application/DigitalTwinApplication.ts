@@ -116,6 +116,9 @@ export class DigitalTwinApplication {
     return this.gateway.predictTraffic(command);
   }
 
+  listScenarios() { return this.gateway.listScenarios(); }
+  getScenarioResults(scenarioId: string) { return this.gateway.getScenarioResults(scenarioId); }
+
   async createAndRunScenario(command: ScenarioCommand): Promise<ScenarioExecution> {
     if (command.name.trim().length < 3) {
       throw new ApplicationValidationError("El escenario debe tener un nombre de al menos tres caracteres.");

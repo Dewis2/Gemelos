@@ -204,9 +204,7 @@ def predict_traffic(payload: PredictionCreate, container: Container) -> Any:
             status_code=status.HTTP_422_UNPROCESSABLE_CONTENT, detail=str(exc)
         ) from exc
     except EntityNotFoundError as exc:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
-        ) from exc
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
 
 
 @router.post(
@@ -225,6 +223,11 @@ def compare_scenarios(
     scenario_ids: Annotated[list[UUID], Query(min_length=2)],
 ) -> dict[str, dict[str, float | int]]:
     return container.compare_scenarios.execute(scenario_ids)
+
+
+@router.get("/api/v1/scenarios", response_model=list[ScenarioResponse], tags=["scenarios"])
+def list_scenarios(container: Container) -> list[Any]:
+    return container.scenario_repository.list_scenarios()
 
 
 @router.post(
