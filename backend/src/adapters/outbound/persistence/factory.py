@@ -10,6 +10,10 @@ No es sobrearquitectura: sustituye una rama condicional real del composition roo
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
+from sqlalchemy.orm import Session
+
 from adapters.outbound.persistence.demo_repository import (
     InMemoryTrafficAggregateRepository,
     SqlAlchemyTrafficAggregateRepository,
@@ -21,6 +25,8 @@ SUPPORTED_PERSISTENCIES = ("memory", "sqlalchemy")
 
 def build_traffic_aggregate_repository(
     persistence: str = "memory",
+    *,
+    session_factory: Callable[[], Session] | None = None,
 ) -> TrafficAggregateRepositoryPort:
     """Devuelve el repositorio de agregados segun la persistencia configurada.
 
@@ -35,7 +41,9 @@ def build_traffic_aggregate_repository(
             f"Use una de {list(SUPPORTED_PERSISTENCIES)}."
         )
     if key == "sqlalchemy":
-        from infrastructure.database.session import SessionFactory
+        if session_factory is None:
+            from infrastructure.database.session import SessionFactory
 
-        return SqlAlchemyTrafficAggregateRepository(SessionFactory)
+            session_factory = SessionFactory
+        return SqlAlchemyTrafficAggregateRepository(session_factory)
     return InMemoryTrafficAggregateRepository()

@@ -1,4 +1,18 @@
 .env
+.env.*
+!.env.example
+!.env.local.example
+credenciales-locales.json
+pgpass.conf
+.pgpass
+*.dump
+*.backup
+backups/
+respaldos/
+pgdata/
+.local/
+# Instalación nativa y archivos privados; no son código del proyecto.
+Entorno BD/
 .venv/
 __pycache__/
 *.py[cod]

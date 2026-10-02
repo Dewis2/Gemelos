@@ -1,4 +1,4 @@
-import { type FormEvent, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
 import type { SimulationResult, SimulationScenario } from "../../domain/models";
 import {
   DEFAULT_SIMULATION_STEPS,
@@ -39,6 +39,33 @@ export function ScenariosPage() {
   const [phase, setPhase] = useState<RunPhase>("idle");
   const [error, setError] = useState<string | null>(null);
 
+  const [saved, setSaved] = useState<SimulationScenario[]>([]);
+  useEffect(() => {
+    let active = true;
+    application.listScenarios().then((items) => { if (active) setSaved(items); })
+      .catch(() => { if (active) setError("No se pudieron consultar los escenarios guardados."); });
+    return () => { active = false; };
+  }, [application]);
+
+  const restore = async (item: SimulationScenario) => {
+    setError(null);
+    setPhase("running");
+    setScenario(item);
+    setName(item.name);
+    setDescription(item.description);
+    setSteps(String(item.configuration.steps ?? DEFAULT_SIMULATION_STEPS));
+    setDemandLevel(item.configuration.demand?.level ?? "normal");
+    setResults(null);
+    try {
+      const rows = await application.getScenarioResults(item.id);
+      setResults(rows);
+      setPhase(rows.length ? "completed" : "idle");
+    } catch {
+      setPhase("failed");
+      setError("No se pudieron recuperar los resultados guardados.");
+    }
+  };
+
   const configuration = useMemo<ScenarioConfiguration>(
     () => ({ demand: { level: demandLevel }, steps: Number(steps) }),
     [demandLevel, steps],
@@ -71,6 +98,7 @@ export function ScenariosPage() {
       .createAndRunScenario({ name, description, configuration })
       .then((execution) => {
         setScenario(execution.scenario);
+        setSaved((items) => [execution.scenario, ...items]);
         setResults(execution.results);
         setPhase("completed");
       })
@@ -95,6 +123,17 @@ export function ScenariosPage() {
       </DataProvenanceNotice>
 
       {error && <div className="error-box" role="alert">{error}</div>}
+
+      <section className="panel">
+        <h3>Escenarios guardados</h3>
+        {saved.length === 0 ? <p>No hay escenarios guardados disponibles.</p> : (
+          <ul>{saved.map((item) => <li key={item.id}>
+            <button type="button" disabled={phase === "running"} onClick={() => void restore(item)}>
+              Recuperar: {item.name}
+            </button>
+          </li>)}</ul>
+        )}
+      </section>
 
       <section className="panel">
         <h3>Tipos de escenario disponibles</h3>
