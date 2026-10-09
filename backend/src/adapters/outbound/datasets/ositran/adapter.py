@@ -9,7 +9,12 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any
 
-from adapters.outbound.datasets.common import file_profile, normalize_text, parse_integer, read_rows
+from adapters.outbound.datasets.common import (
+    file_profile,
+    normalize_text,
+    parse_integer,
+    read_rows,
+)
 from application.dto.peru_demo import DatasetMetadata, DatasetScope, TrafficAggregate
 
 DATASET_ID = "ositran_peru_road_traffic"
@@ -130,7 +135,9 @@ class OsitranRoadTrafficAdapter:
             year, month = (int(part) for part in period.split("-"))
             last_day = calendar.monthrange(year, month)[1]
             source_payload = json.dumps(row, sort_keys=True, ensure_ascii=False)
-            source_record_id = hashlib.sha256(source_payload.encode("utf-8")).hexdigest()
+            source_record_id = hashlib.sha256(
+                source_payload.encode("utf-8")
+            ).hexdigest()
             yield TrafficAggregate(
                 dataset_id=DATASET_ID,
                 source_record_id=source_record_id,
@@ -161,7 +168,11 @@ class OsitranRoadTrafficAdapter:
 
     def validate(self) -> dict[str, Any]:
         if not self.path.exists():
-            return {"valid": False, "error": "raw file not found", "path": str(self.path)}
+            return {
+                "valid": False,
+                "error": "raw file not found",
+                "path": str(self.path),
+            }
         profile = file_profile(self.path)
         rows = self._rows()
         missing_columns = sorted(self._required.difference(profile["columns"]))

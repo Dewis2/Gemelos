@@ -132,7 +132,10 @@ def test_registering_a_new_strategy_changes_the_selection_at_runtime() -> None:
     resolver.register(CorredorUnicoScope(), first=True)
     # Misma peticion, distinta estrategia seleccionada.
     assert resolver.resolve(LOCAL_DATASET).key == "corredor_unico"
-    assert resolver.resolve(LOCAL_DATASET).warning() == "Aviso de la estrategia de corredor."
+    assert (
+        resolver.resolve(LOCAL_DATASET).warning()
+        == "Aviso de la estrategia de corredor."
+    )
 
 
 def test_resolver_without_local_strategy_falls_back_to_the_national_one() -> None:

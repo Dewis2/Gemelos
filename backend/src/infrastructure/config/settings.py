@@ -1,5 +1,5 @@
 from functools import lru_cache
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
@@ -8,12 +8,15 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Gemelo Digital Huancayo API"
     environment: str = "development"
-    database_url: str = "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    database_url: str = (
+        "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    )
     mqtt_host: str = "localhost"
     mqtt_port: int = 1883
     mqtt_enabled: bool = False
     data_root: str = "data"
-    demo_repository: str = "memory"
+    core_repository: Literal["memory", "sqlalchemy"] = "memory"
+    demo_repository: Literal["memory", "sqlalchemy"] = "memory"
     demo_ml_metadata_path: str = "ml/models/demo_peru/metadata.json"
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
     log_level: str = "INFO"

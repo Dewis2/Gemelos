@@ -12,6 +12,10 @@ from infrastructure.config import Settings
 def app() -> FastAPI:
     return create_app(
         Settings(
+            _env_file=None,
+            core_repository="memory",
+            demo_repository="memory",
+            mqtt_enabled=False,
             environment="test",
             ml_model_path="nonexistent-test-model.joblib",
             cors_origins=["http://testserver"],

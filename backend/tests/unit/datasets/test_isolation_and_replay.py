@@ -48,7 +48,9 @@ def test_ingestion_is_idempotent_and_detects_duplicates() -> None:
 
 
 def test_historical_replay_payload_keeps_original_period() -> None:
-    adapter = HuancayoHistoricalAdapter(Path("data/reference/huancayo_historical_counts.csv"))
+    adapter = HuancayoHistoricalAdapter(
+        Path("data/reference/huancayo_historical_counts.csv")
+    )
     query = PeruDemoQueryService({adapter.get_metadata().dataset_id: adapter}, adapter)
     publisher = CapturingPublisher()
     service = HistoricalReplayService(

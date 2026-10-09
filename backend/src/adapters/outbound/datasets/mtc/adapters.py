@@ -114,7 +114,9 @@ class MtcTollFlowAdapter:
                 "region": row.get("DEPARTAMENTO"),
                 "administration": row.get("ADMINIST"),
             }
-        return sorted(unique.values(), key=lambda item: (str(item["region"]), str(item["name"])))
+        return sorted(
+            unique.values(), key=lambda item: (str(item["region"]), str(item["name"]))
+        )
 
     def stream_measurements(
         self,
@@ -135,7 +137,9 @@ class MtcTollFlowAdapter:
         emitted = 0
         for row in self._rows():
             period = row.get("PERIODO", "")
-            display_period = f"{period[:4]}-{period[4:6]}" if len(period) == 6 else period
+            display_period = (
+                f"{period[:4]}-{period[4:6]}" if len(period) == 6 else period
+            )
             if start_period and display_period < start_period:
                 continue
             if end_period and display_period > end_period:
@@ -186,7 +190,11 @@ class MtcTollFlowAdapter:
 
     def validate(self) -> dict[str, Any]:
         if not self.path.exists():
-            return {"valid": False, "error": "raw file not found", "path": str(self.path)}
+            return {
+                "valid": False,
+                "error": "raw file not found",
+                "path": str(self.path),
+            }
         profile = file_profile(self.path)
         rows = self._rows()
         missing_columns = sorted(self._required.difference(profile["columns"]))
@@ -296,7 +304,9 @@ class MtcTollLocationAdapter:
             locations.append(
                 TrafficLocation(
                     dataset_id=LOCATION_DATASET_ID,
-                    source_location_id=str(properties.get("CODPEAJE") or properties.get("IDPEAJE")),
+                    source_location_id=str(
+                        properties.get("CODPEAJE") or properties.get("IDPEAJE")
+                    ),
                     name=str(properties.get("NOMBRE") or ""),
                     location_type="unidad_de_peaje",
                     operator=properties.get("ADMINIST"),
@@ -326,7 +336,11 @@ class MtcTollLocationAdapter:
 
     def validate(self) -> dict[str, Any]:
         if not self.path.exists():
-            return {"valid": False, "error": "raw file not found", "path": str(self.path)}
+            return {
+                "valid": False,
+                "error": "raw file not found",
+                "path": str(self.path),
+            }
         document = self._document()
         features = document.get("features", [])
         valid_locations = self.get_locations()
@@ -353,7 +367,11 @@ class MtcTollLocationAdapter:
                 else None
             ),
             "columns": sorted(
-                {key for feature in features for key in feature.get("properties", {}).keys()}
+                {
+                    key
+                    for feature in features
+                    for key in feature.get("properties", {}).keys()
+                }
             ),
             "period_min": min(self.get_available_periods(), default=None),
             "period_max": max(self.get_available_periods(), default=None),

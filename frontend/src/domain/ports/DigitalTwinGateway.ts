@@ -32,6 +32,8 @@ export interface DigitalTwinGateway {
   stopReplay(): Promise<DemoState>;
   resetReplay(): Promise<DemoState>;
   predictTraffic(command: PredictionCommand): Promise<TrafficPrediction>;
+  listScenarios(): Promise<SimulationScenario[]>;
+  getScenarioResults(scenarioId: string): Promise<SimulationResult[]>;
   createScenario(command: ScenarioCommand): Promise<SimulationScenario>;
   runScenario(scenarioId: string): Promise<SimulationResult[]>;
 }

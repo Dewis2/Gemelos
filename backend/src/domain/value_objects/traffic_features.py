@@ -55,7 +55,9 @@ class TrafficFeatures:
             if isinstance(raw, bool) or not isinstance(raw, (int, float)):
                 raise DomainValidationError(f"La variable {name} debe ser numerica.")
             if float(raw) != int(raw):
-                raise DomainValidationError(f"La variable {name} debe ser un numero entero.")
+                raise DomainValidationError(
+                    f"La variable {name} debe ser un numero entero."
+                )
             value = int(raw)
             if not minimum <= value <= maximum:
                 raise DomainValidationError(

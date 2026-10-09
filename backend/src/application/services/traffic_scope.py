@@ -88,7 +88,9 @@ def default_scope_strategies() -> tuple[TrafficScopeStrategy, ...]:
 class TrafficScopeResolver:
     """Contexto Strategy: selecciona y permite intercambiar la política aplicable."""
 
-    def __init__(self, strategies: Sequence[TrafficScopeStrategy] | None = None) -> None:
+    def __init__(
+        self, strategies: Sequence[TrafficScopeStrategy] | None = None
+    ) -> None:
         self._strategies: list[TrafficScopeStrategy] = list(
             default_scope_strategies() if strategies is None else strategies
         )

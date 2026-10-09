@@ -29,7 +29,9 @@ class TrafficMqttConsumer:
                     else None
                 ),
                 occupancy=(
-                    float(payload["occupancy"]) if payload.get("occupancy") is not None else None
+                    float(payload["occupancy"])
+                    if payload.get("occupancy") is not None
+                    else None
                 ),
             )
         except (KeyError, TypeError, ValueError, json.JSONDecodeError) as exc:

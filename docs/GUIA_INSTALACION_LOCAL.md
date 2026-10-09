@@ -12,10 +12,10 @@ El proyecto tiene dos aplicaciones principales:
 - **Backend:** API REST desarrollada con Python y FastAPI. Usa el puerto `8000`.
 - **Frontend:** interfaz desarrollada con React, TypeScript y Vite. Usa el puerto `5173`.
 
-Para trabajar en desarrollo no es obligatorio instalar PostgreSQL, MQTT ni SUMO. El
-backend utiliza almacenamiento en memoria de manera predeterminada. Docker permite
-levantar también PostgreSQL y Mosquitto cuando se necesite probar la integración
-completa.
+Las plantillas activan PostgreSQL para la API y los agregados históricos. Aplique las
+migraciones antes de iniciar el backend. Para trabajar sin PostgreSQL, configure
+CORE_REPOSITORY=memory y DEMO_REPOSITORY=memory. MQTT y SUMO siguen siendo opcionales
+para la demostración técnica. Consulte docs/database/testing.md para las pruebas reales.
 
 ## 2. Requisitos previos
 
@@ -70,8 +70,13 @@ intérprete de Python.
 Crear la configuración local solo si el archivo `.env` todavía no existe:
 
 ```powershell
-if (!(Test-Path .env)) { Copy-Item .env.example .env }
+if (!(Test-Path .env)) { Copy-Item .env.local.example .env }
 ```
+
+Para esta modalidad sin servicios, establecer `DEMO_REPOSITORY=memory` en `.env`.
+Para trabajar con PostgreSQL, reemplazar `CHANGE_ME`, verificar el puerto y completar
+primero la [guía de base de datos](database/README.md). No sobrescribir una conexión
+local que ya esté configurada.
 
 Iniciar el backend:
 
@@ -109,7 +114,14 @@ Desde la raíz del proyecto:
 python3 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
 ./.venv/bin/python -m pip install -e "./backend[dev]"
-cp -n .env.example .env
+cp -n .env.local.example .env
+```
+
+Editar `.env`: usar `DEMO_REPOSITORY=memory` si no se dispone de PostgreSQL; para
+persistencia, configurar la contraseña y preparar la base según la guía anterior.
+Después iniciar:
+
+```bash
 export PYTHONPATH="backend/src"
 ./.venv/bin/python -m uvicorn main:app --app-dir backend/src --reload
 ```
@@ -127,6 +139,11 @@ Abrir <http://localhost:5173>.
 
 Esta opción ejecuta frontend, backend, PostgreSQL/PostGIS y Mosquitto. Requiere Docker
 Desktop abierto.
+
+Usar la plantilla `.env.example` para Compose. Antes del arranque, reemplazar sus
+dos `CHANGE_ME` con la misma contraseña. Si ya existe un `.env` nativo, adaptar
+su URL al host interno `postgres:5432` en lugar de copiarlo o sobrescribirlo sin
+revisión. Las rutas de datos internas las configura el servicio en Compose.
 
 En Windows PowerShell:
 

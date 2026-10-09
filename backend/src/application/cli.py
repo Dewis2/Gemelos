@@ -77,7 +77,9 @@ def data_root() -> Path:
     return Path(os.getenv("DATA_ROOT", "data"))
 
 
-def adapters(root: Path) -> tuple[dict[str, TrafficDatasetPort], MtcTollLocationAdapter]:
+def adapters(
+    root: Path,
+) -> tuple[dict[str, TrafficDatasetPort], MtcTollLocationAdapter]:
     flow = MtcTollFlowAdapter(root / "external/mtc/toll_flow/raw/mtc_toll_flow.csv")
     locations = MtcTollLocationAdapter(
         root / "external/mtc/toll_locations/raw/mtc_toll_locations.geojson"
@@ -85,7 +87,9 @@ def adapters(root: Path) -> tuple[dict[str, TrafficDatasetPort], MtcTollLocation
     ositran = OsitranRoadTrafficAdapter(
         root / "external/ositran/road_traffic/raw/ositran_road_traffic.csv"
     )
-    huancayo = HuancayoHistoricalAdapter(root / "reference/huancayo_historical_counts.csv")
+    huancayo = HuancayoHistoricalAdapter(
+        root / "reference/huancayo_historical_counts.csv"
+    )
     return (
         {
             "mtc-toll-flow": flow,
@@ -149,14 +153,17 @@ def _catalog_text(metadata: dict[str, Any], path: Path | None) -> str:
         "allowed_uses:",
     ]
     lines.extend(
-        f"  {key}: {str(value).lower()}" for key, value in metadata["allowed_uses"].items()
+        f"  {key}: {str(value).lower()}"
+        for key, value in metadata["allowed_uses"].items()
     )
     lines.append("limitations:")
     lines.extend(f'  - "{item}"' for item in metadata["limitations"])
     return "\n".join(lines) + "\n"
 
 
-def _join_report(flow: MtcTollFlowAdapter, locations: MtcTollLocationAdapter) -> dict[str, Any]:
+def _join_report(
+    flow: MtcTollFlowAdapter, locations: MtcTollLocationAdapter
+) -> dict[str, Any]:
     flow_locations = {
         str(item["source_location_id"]): item
         for item in flow.get_locations()
@@ -190,9 +197,9 @@ def _join_report(flow: MtcTollFlowAdapter, locations: MtcTollLocationAdapter) ->
         "ambiguous": len(ambiguous),
         "unmatched_location_ids": sorted(unmatched),
         "ambiguous_location_ids": sorted(ambiguous),
-        "join_rate_percent": round((matched / len(flow_locations) * 100), 4)
-        if flow_locations
-        else 0.0,
+        "join_rate_percent": (
+            round((matched / len(flow_locations) * 100), 4) if flow_locations else 0.0
+        ),
     }
 
 
@@ -282,12 +289,18 @@ def generate_reports(root: Path) -> dict[str, Any]:
         "duplicates_within_sources": duplicates,
         "period_min": min(
             value
-            for value in [mtc_report.get("period_min"), ositran_report.get("period_min")]
+            for value in [
+                mtc_report.get("period_min"),
+                ositran_report.get("period_min"),
+            ]
             if value
         ),
         "period_max": max(
             value
-            for value in [mtc_report.get("period_max"), ositran_report.get("period_max")]
+            for value in [
+                mtc_report.get("period_max"),
+                ositran_report.get("period_max"),
+            ]
             if value
         ),
         "locations": {
@@ -314,8 +327,10 @@ def generate_reports(root: Path) -> dict[str, Any]:
 
     catalog_paths = {
         "mtc-toll-flow": root / "external/mtc/toll_flow/raw/mtc_toll_flow.csv",
-        "mtc-toll-locations": root / "external/mtc/toll_locations/raw/mtc_toll_locations.geojson",
-        "ositran-road-traffic": root / "external/ositran/road_traffic/raw/ositran_road_traffic.csv",
+        "mtc-toll-locations": root
+        / "external/mtc/toll_locations/raw/mtc_toll_locations.geojson",
+        "ositran-road-traffic": root
+        / "external/ositran/road_traffic/raw/ositran_road_traffic.csv",
         "huancayo-historical": root / "reference/huancayo_historical_counts.csv",
     }
     catalog_names = {
@@ -326,7 +341,9 @@ def generate_reports(root: Path) -> dict[str, Any]:
     }
     for slug, catalog_adapter in available.items():
         (catalog_dir / catalog_names[slug]).write_text(
-            _catalog_text(catalog_adapter.get_metadata().to_dict(), catalog_paths[slug]),
+            _catalog_text(
+                catalog_adapter.get_metadata().to_dict(), catalog_paths[slug]
+            ),
             encoding="utf-8",
         )
     return {
@@ -371,7 +388,9 @@ def ingest(
         run_recorder = SqlAlchemyIngestionRunRecorder(SessionFactory)
         run_id = run_recorder.start(adapter.get_metadata().dataset_id)
         location_repository = SqlAlchemyTrafficLocationRepository(SessionFactory)
-        location_counts = Counter(location_repository.upsert(item) for item in locations)
+        location_counts = Counter(
+            location_repository.upsert(item) for item in locations
+        )
         result = {
             "dataset_id": adapter.get_metadata().dataset_id,
             "dry_run": False,
@@ -496,7 +515,10 @@ def main(argv: list[str] | None = None) -> int:
         result = ingest(available[args.dataset], dry_run=args.dry_run, limit=args.limit)
     elif args.action == "find-region":
         query = PeruDemoQueryService(
-            {adapter.get_metadata().dataset_id: adapter for adapter in available.values()},
+            {
+                adapter.get_metadata().dataset_id: adapter
+                for adapter in available.values()
+            },
             location_adapter,
         )
         if normalize_text(args.region) == "junin":

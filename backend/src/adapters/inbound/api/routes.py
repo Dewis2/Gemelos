@@ -79,7 +79,9 @@ def datasets(container: Container) -> list[dict[str, Any]]:
 def dataset_detail(dataset_id: str, container: Container) -> dict[str, Any]:
     dataset = container.demo_query.get_dataset(dataset_id)
     if dataset is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found"
+        )
     return dataset
 
 
@@ -105,9 +107,15 @@ def peru_traffic(
 ) -> dict[str, Any]:
     dataset = container.demo_query.get_dataset(dataset_id)
     if dataset is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Dataset not found"
+        )
     if provider and provider.casefold() not in str(dataset["provider"]).casefold():
-        return {"record_count": 0, "records": [], "message": "Provider filter did not match"}
+        return {
+            "record_count": 0,
+            "records": [],
+            "message": "Provider filter did not match",
+        }
     return container.demo_query.traffic(
         dataset_id,
         region=region,
@@ -132,12 +140,16 @@ def peru_comparison(container: Container) -> dict[str, Any]:
 @router.get("/api/v1/demo/peru/ml", tags=["demo-peru"])
 def peru_ml_experiment(container: Container) -> dict[str, Any]:
     if container.demo_ml_metadata is None:
-        raise HTTPException(status_code=404, detail="El experimento ML aún no fue ejecutado")
+        raise HTTPException(
+            status_code=404, detail="El experimento ML aún no fue ejecutado"
+        )
     return container.demo_ml_metadata
 
 
 @router.post("/api/v1/demo/peru/replay/start", tags=["demo-peru"])
-def start_peru_replay(payload: ReplayStartRequest, container: Container) -> dict[str, Any]:
+def start_peru_replay(
+    payload: ReplayStartRequest, container: Container
+) -> dict[str, Any]:
     try:
         return container.demo_replay.start(
             payload.dataset_id,
@@ -227,6 +239,13 @@ def compare_scenarios(
     return container.compare_scenarios.execute(scenario_ids)
 
 
+@router.get(
+    "/api/v1/scenarios", response_model=list[ScenarioResponse], tags=["scenarios"]
+)
+def list_scenarios(container: Container) -> list[Any]:
+    return container.scenario_repository.list_scenarios()
+
+
 @router.post(
     "/api/v1/scenarios/{scenario_id}/run",
     response_model=list[SimulationResultResponse],
@@ -236,7 +255,9 @@ def run_scenario(scenario_id: UUID, container: Container) -> list[Any]:
     try:
         return container.run_scenario.execute(scenario_id)
     except EntityNotFoundError as exc:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)
+        ) from exc
 
 
 @router.get(

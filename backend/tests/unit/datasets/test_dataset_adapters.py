@@ -39,13 +39,18 @@ def test_ositran_parser_preserves_original_columns(tmp_path: Path) -> None:
     assert rows[0].metadata["source_columns"]["CLASE_VEHICULO"] == "PAGANTES"
 
 
-def test_geojson_parser_uses_declared_crs_and_rejects_invalid_geometry(tmp_path: Path) -> None:
+def test_geojson_parser_uses_declared_crs_and_rejects_invalid_geometry(
+    tmp_path: Path,
+) -> None:
     path = tmp_path / "synthetic_test_fixture_locations.geojson"
     path.write_text(
         json.dumps(
             {
                 "type": "FeatureCollection",
-                "crs": {"type": "name", "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"}},
+                "crs": {
+                    "type": "name",
+                    "properties": {"name": "urn:ogc:def:crs:OGC:1.3:CRS84"},
+                },
                 "features": [
                     {
                         "type": "Feature",
@@ -72,7 +77,9 @@ def test_geojson_parser_uses_declared_crs_and_rejects_invalid_geometry(tmp_path:
 
 
 def test_huancayo_2013_is_never_labeled_current() -> None:
-    adapter = HuancayoHistoricalAdapter(Path("data/reference/huancayo_historical_counts.csv"))
+    adapter = HuancayoHistoricalAdapter(
+        Path("data/reference/huancayo_historical_counts.csv")
+    )
     rows = list(adapter.stream_measurements())
     assert len(rows) == 9
     assert all(row.dataset_scope.value == "huancayo_local_historical" for row in rows)
