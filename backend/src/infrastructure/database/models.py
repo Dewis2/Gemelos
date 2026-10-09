@@ -33,9 +33,13 @@ from infrastructure.database.base import Base
 
 class IntersectionModel(Base):
     __tablename__ = "intersections"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
-    geometry: Mapped[Any | None] = mapped_column(Geometry("POINT", srid=4326), nullable=True)
+    geometry: Mapped[Any | None] = mapped_column(
+        Geometry("POINT", srid=4326), nullable=True
+    )
 
     def to_domain(self) -> Intersection:
         return Intersection(
@@ -47,13 +51,17 @@ class IntersectionModel(Base):
 
 class RoadSegmentModel(Base):
     __tablename__ = "road_segments"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     start_intersection_id: Mapped[UUID] = mapped_column(ForeignKey("intersections.id"))
     end_intersection_id: Mapped[UUID] = mapped_column(ForeignKey("intersections.id"))
     lane_count: Mapped[int] = mapped_column(Integer)
     reference_speed: Mapped[float] = mapped_column(Float)
-    geometry: Mapped[Any | None] = mapped_column(Geometry("LINESTRING", srid=4326), nullable=True)
+    geometry: Mapped[Any | None] = mapped_column(
+        Geometry("LINESTRING", srid=4326), nullable=True
+    )
 
     def to_domain(self) -> RoadSegment:
         return RoadSegment(
@@ -69,7 +77,9 @@ class RoadSegmentModel(Base):
 
 class DataSourceModel(Base):
     __tablename__ = "data_sources"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     name: Mapped[str] = mapped_column(String(150), nullable=False)
     source_type: Mapped[str] = mapped_column(String(50), nullable=False)
     description: Mapped[str | None] = mapped_column(String(500))
@@ -109,8 +119,12 @@ class TrafficMeasurementModel(Base):
 
 class TrafficSignalPlanModel(Base):
     __tablename__ = "traffic_signal_plans"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
-    intersection_id: Mapped[UUID] = mapped_column(ForeignKey("intersections.id"), index=True)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
+    intersection_id: Mapped[UUID] = mapped_column(
+        ForeignKey("intersections.id"), index=True
+    )
     name: Mapped[str] = mapped_column(String(150))
     phases: Mapped[list[dict[str, Any]]] = mapped_column(JSONB)
 
@@ -158,9 +172,13 @@ class SimulationScenarioModel(Base):
 class SimulationResultModel(Base):
     __tablename__ = "simulation_results"
     __table_args__ = (
-        Index("ix_simulation_results_scenario_segment", "scenario_id", "road_segment_id"),
+        Index(
+            "ix_simulation_results_scenario_segment", "scenario_id", "road_segment_id"
+        ),
     )
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     scenario_id: Mapped[UUID] = mapped_column(ForeignKey("simulation_scenarios.id"))
     road_segment_id: Mapped[UUID] = mapped_column(ForeignKey("road_segments.id"))
     travel_time: Mapped[float] = mapped_column(Float)
@@ -194,7 +212,9 @@ class TrafficAggregateModel(Base):
         Index("ix_traffic_aggregates_dataset_period", "dataset_id", "period_start"),
         Index("ix_traffic_aggregates_location", "source_location_id"),
     )
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     natural_key: Mapped[str] = mapped_column(String(500), unique=True, nullable=False)
     dataset_id: Mapped[str] = mapped_column(String(100), nullable=False)
     source_record_id: Mapped[str] = mapped_column(String(128), nullable=False)
@@ -257,12 +277,18 @@ class TrafficLocationModel(Base):
     __tablename__ = "traffic_locations"
     __table_args__ = (
         UniqueConstraint(
-            "dataset_id", "source_location_id", name="uq_traffic_locations_dataset_source"
+            "dataset_id",
+            "source_location_id",
+            name="uq_traffic_locations_dataset_source",
         ),
     )
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     dataset_id: Mapped[str] = mapped_column(String(100), nullable=False)
-    source_location_id: Mapped[str] = mapped_column(String(120), nullable=False, index=True)
+    source_location_id: Mapped[str] = mapped_column(
+        String(120), nullable=False, index=True
+    )
     name: Mapped[str] = mapped_column(String(200), nullable=False)
     type: Mapped[str] = mapped_column(String(80), nullable=False)
     operator: Mapped[str | None] = mapped_column(String(250))
@@ -273,9 +299,13 @@ class TrafficLocationModel(Base):
 
 class DatasetIngestionRunModel(Base):
     __tablename__ = "dataset_ingestion_runs"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), primary_key=True, default=uuid4
+    )
     dataset_id: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
-    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    started_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), nullable=False
+    )
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     status: Mapped[str] = mapped_column(String(40), nullable=False)
     files_processed: Mapped[int] = mapped_column(Integer, default=0)

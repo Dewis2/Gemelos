@@ -55,7 +55,8 @@ class SumoTrafficSimulator:
     def get_average_speed(self) -> float:
         ids = self._client().vehicle.getIDList()
         return (
-            sum(self._client().vehicle.getSpeed(vehicle_id) for vehicle_id in ids) / len(ids)
+            sum(self._client().vehicle.getSpeed(vehicle_id) for vehicle_id in ids)
+            / len(ids)
             if ids
             else 0.0
         )

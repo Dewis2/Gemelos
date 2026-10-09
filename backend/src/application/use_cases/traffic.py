@@ -3,7 +3,9 @@ from domain.entities import TrafficMeasurement
 
 
 class RegisterTrafficMeasurement:
-    def __init__(self, repository: TrafficRepository, publisher: EventPublisherPort) -> None:
+    def __init__(
+        self, repository: TrafficRepository, publisher: EventPublisherPort
+    ) -> None:
         self._repository = repository
         self._publisher = publisher
 

@@ -33,7 +33,9 @@ class RoadSegment:
 
     def __post_init__(self) -> None:
         if self.start_intersection_id == self.end_intersection_id:
-            raise DomainValidationError("A road segment needs two different intersections")
+            raise DomainValidationError(
+                "A road segment needs two different intersections"
+            )
         if self.lane_count < 1:
             raise DomainValidationError("lane_count must be at least 1")
         if self.reference_speed <= 0:

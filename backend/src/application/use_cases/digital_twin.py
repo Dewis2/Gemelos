@@ -5,7 +5,9 @@ from domain.entities import TrafficMeasurement
 
 
 class GetDigitalTwinState:
-    def __init__(self, traffic: TrafficRepository, network: RoadNetworkRepository) -> None:
+    def __init__(
+        self, traffic: TrafficRepository, network: RoadNetworkRepository
+    ) -> None:
         self._traffic = traffic
         self._network = network
 

@@ -72,7 +72,9 @@ class CompareSimulationScenarios:
                 "average_speed": (
                     sum(item.average_speed for item in values) / count if count else 0.0
                 ),
-                "average_delay": (sum(item.delay for item in values) / count if count else 0.0),
+                "average_delay": (
+                    sum(item.delay for item in values) / count if count else 0.0
+                ),
                 "average_queue_length": (
                     sum(item.queue_length for item in values) / count if count else 0.0
                 ),

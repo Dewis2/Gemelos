@@ -82,7 +82,10 @@ class SqlAlchemyTrafficAggregateRepository:
             rows = session.scalars(
                 select(TrafficAggregateModel)
                 .where(TrafficAggregateModel.dataset_id == dataset_id)
-                .order_by(TrafficAggregateModel.period_start, TrafficAggregateModel.natural_key)
+                .order_by(
+                    TrafficAggregateModel.period_start,
+                    TrafficAggregateModel.natural_key,
+                )
             )
             return [row.to_dto() for row in rows]
 
@@ -103,10 +106,13 @@ class SqlAlchemyTrafficLocationRepository:
             existing = session.scalar(
                 select(TrafficLocationModel).where(
                     TrafficLocationModel.dataset_id == location.dataset_id,
-                    TrafficLocationModel.source_location_id == location.source_location_id,
+                    TrafficLocationModel.source_location_id
+                    == location.source_location_id,
                 )
             )
-            geometry = WKTElement(f"POINT({location.longitude} {location.latitude})", srid=4326)
+            geometry = WKTElement(
+                f"POINT({location.longitude} {location.latitude})", srid=4326
+            )
             properties = {**location.properties, "source_crs": location.crs}
             if existing is None:
                 session.add(
@@ -153,7 +159,9 @@ class SqlAlchemyIngestionRunRecorder:
             session.commit()
         return run_id
 
-    def finish(self, run_id: UUID, counters: dict[str, int], *, status: str = "completed") -> None:
+    def finish(
+        self, run_id: UUID, counters: dict[str, int], *, status: str = "completed"
+    ) -> None:
         from infrastructure.database.models import DatasetIngestionRunModel
 
         with self._session_factory() as session:

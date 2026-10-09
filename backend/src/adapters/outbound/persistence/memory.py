@@ -47,7 +47,9 @@ class InMemoryStore:
         return item
 
     def latest(self) -> list[TrafficMeasurement]:
-        return sorted(self.measurements, key=lambda item: item.timestamp, reverse=True)[:100]
+        return sorted(self.measurements, key=lambda item: item.timestamp, reverse=True)[
+            :100
+        ]
 
     def list_segments(self) -> list[RoadSegment]:
         return list(self.segments)

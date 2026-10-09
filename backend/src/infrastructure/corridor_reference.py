@@ -32,7 +32,9 @@ CORRIDOR_TO = "Av. Huancavelica"
 CORRIDOR_LABEL = f"{CORRIDOR_NAME}: {CORRIDOR_FROM}–{CORRIDOR_TO}"
 
 #: Espacio de nombres estable; cambiarlo cambiaría todos los identificadores del corredor.
-CORRIDOR_NAMESPACE = uuid5(NAMESPACE_URL, "https://gemelo-digital-huancayo.org/corredor/ferrocarril")
+CORRIDOR_NAMESPACE = uuid5(
+    NAMESPACE_URL, "https://gemelo-digital-huancayo.org/corredor/ferrocarril"
+)
 
 #: Valores exigidos por el contrato de dominio, no datos de la vía.
 PLACEHOLDER_LANE_COUNT = 1

@@ -134,7 +134,9 @@ def test_scenario_lifecycle(client: TestClient) -> None:
 
 def test_compare_route_is_not_shadowed_by_scenario_id(client: TestClient) -> None:
     first, second = uuid4(), uuid4()
-    response = client.get(f"/api/v1/scenarios/compare?scenario_ids={first}&scenario_ids={second}")
+    response = client.get(
+        f"/api/v1/scenarios/compare?scenario_ids={first}&scenario_ids={second}"
+    )
     assert response.status_code == 200
     assert response.json()[str(first)]["result_count"] == 0
 

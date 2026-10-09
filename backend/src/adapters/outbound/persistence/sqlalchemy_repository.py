@@ -81,7 +81,9 @@ class SqlAlchemyRoadNetworkRepository:
         with self._session_factory() as session:
             return [
                 row.to_domain()
-                for row in session.scalars(select(RoadSegmentModel).order_by(RoadSegmentModel.name))
+                for row in session.scalars(
+                    select(RoadSegmentModel).order_by(RoadSegmentModel.name)
+                )
             ]
 
     def list_intersections(self) -> list[Intersection]:
@@ -100,7 +102,9 @@ class SqlAlchemySimulationRepository:
 
     def add_all(self, results: list[SimulationResult]) -> list[SimulationResult]:
         with self._session_factory.begin() as session:
-            session.add_all([SimulationResultModel.from_domain(item) for item in results])
+            session.add_all(
+                [SimulationResultModel.from_domain(item) for item in results]
+            )
         return results
 
     def by_scenario(self, scenario_id: UUID) -> list[SimulationResult]:

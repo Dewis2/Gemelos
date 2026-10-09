@@ -54,7 +54,9 @@ class ApplicationContainer:
         self.session_factory = None
         if "sqlalchemy" in {settings.core_repository, settings.demo_repository}:
             self.engine = create_engine(settings.database_url, pool_pre_ping=True)
-            self.session_factory = sessionmaker(bind=self.engine, expire_on_commit=False)
+            self.session_factory = sessionmaker(
+                bind=self.engine, expire_on_commit=False
+            )
         traffic: TrafficRepository
         network: RoadNetworkRepository
         prediction: PredictionRepository
@@ -87,7 +89,9 @@ class ApplicationContainer:
         self.get_twin_state = GetDigitalTwinState(traffic, network)
         self.predict_traffic = PredictTrafficFlow(model, prediction, network)
         self.create_scenario = CreateSimulationScenario(scenario)
-        self.run_scenario = RunSimulationScenario(scenario, simulation, network, simulator)
+        self.run_scenario = RunSimulationScenario(
+            scenario, simulation, network, simulator
+        )
         self.get_simulation_results = GetSimulationResults(simulation)
         self.compare_scenarios = CompareSimulationScenarios(simulation)
 
@@ -96,10 +100,20 @@ class ApplicationContainer:
             data_root / "external" / "mtc" / "toll_flow" / "raw" / "mtc_toll_flow.csv"
         )
         mtc_locations = MtcTollLocationAdapter(
-            data_root / "external" / "mtc" / "toll_locations" / "raw" / "mtc_toll_locations.geojson"
+            data_root
+            / "external"
+            / "mtc"
+            / "toll_locations"
+            / "raw"
+            / "mtc_toll_locations.geojson"
         )
         ositran = OsitranRoadTrafficAdapter(
-            data_root / "external" / "ositran" / "road_traffic" / "raw" / "ositran_road_traffic.csv"
+            data_root
+            / "external"
+            / "ositran"
+            / "road_traffic"
+            / "raw"
+            / "ositran_road_traffic.csv"
         )
         huancayo = HuancayoHistoricalAdapter(
             data_root / "reference" / "huancayo_historical_counts.csv"
@@ -141,7 +155,9 @@ class ApplicationContainer:
         metadata_path = Path(settings.demo_ml_metadata_path)
         self.demo_ml_metadata: dict[str, object] | None = None
         if metadata_path.exists():
-            self.demo_ml_metadata = json.loads(metadata_path.read_text(encoding="utf-8"))
+            self.demo_ml_metadata = json.loads(
+                metadata_path.read_text(encoding="utf-8")
+            )
 
     def close(self) -> None:
         self.demo_replay.stop()

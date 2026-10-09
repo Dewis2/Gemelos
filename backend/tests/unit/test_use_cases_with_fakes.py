@@ -59,7 +59,9 @@ class FakeEventPublisher:
         self.events.append((topic, payload))
 
 
-def build_prediction_use_case(model: Any) -> tuple[PredictTrafficFlow, InMemoryStore, RoadSegment]:
+def build_prediction_use_case(
+    model: Any,
+) -> tuple[PredictTrafficFlow, InMemoryStore, RoadSegment]:
     store = InMemoryStore()
     intersections, segment = make_network()
     store.intersections.extend(intersections)
@@ -68,7 +70,9 @@ def build_prediction_use_case(model: Any) -> tuple[PredictTrafficFlow, InMemoryS
 
 
 def request_for(segment_id: UUID, features: dict[str, float]) -> PredictionRequest:
-    return PredictionRequest(segment_id, datetime.now(UTC) + timedelta(hours=1), features)
+    return PredictionRequest(
+        segment_id, datetime.now(UTC) + timedelta(hours=1), features
+    )
 
 
 # --- Caso de uso de prediccion: camino feliz con fakes -------------------------
@@ -91,7 +95,9 @@ def test_prediction_delegates_to_the_port_and_persists() -> None:
 
 
 def test_prediction_clamps_negative_volume_to_zero() -> None:
-    use_case, _store, segment = build_prediction_use_case(FakeMachineLearningModel(volume=-50.0))
+    use_case, _store, segment = build_prediction_use_case(
+        FakeMachineLearningModel(volume=-50.0)
+    )
     prediction = use_case.execute(request_for(segment.id, VALID_FEATURES))
     assert prediction.predicted_volume == 0.0
 
@@ -104,7 +110,10 @@ def test_prediction_clamps_negative_volume_to_zero() -> None:
     [
         ({}, "Faltan variables de entrada del modelo"),
         ({"hour": 8}, "Faltan variables de entrada del modelo"),
-        ({**VALID_FEATURES, "traffic_volume": 900}, "Variables no esperadas por el modelo"),
+        (
+            {**VALID_FEATURES, "traffic_volume": 900},
+            "Variables no esperadas por el modelo",
+        ),
         ({**VALID_FEATURES, "hour": 99}, "hour debe estar entre 0 y 23"),
         ({**VALID_FEATURES, "day_of_week": 9}, "day_of_week debe estar entre 0 y 6"),
         ({**VALID_FEATURES, "month": 13}, "month debe estar entre 1 y 12"),
@@ -168,7 +177,9 @@ def test_register_measurement_persists_through_the_repository_port() -> None:
     assert store.latest() == [saved]
     assert store.latest()[0].road_segment_id == segment_id
     assert store.latest()[0].traffic_volume == 812
-    assert publisher.events and publisher.events[0][1]["measurement_id"] == str(measurement.id)
+    assert publisher.events and publisher.events[0][1]["measurement_id"] == str(
+        measurement.id
+    )
 
 
 def test_repository_returns_latest_measurements_in_reverse_chronology() -> None:
@@ -178,7 +189,9 @@ def test_repository_returns_latest_measurements_in_reverse_chronology() -> None:
         source_id=uuid4(), road_segment_id=uuid4(), timestamp=base, traffic_volume=10
     )
     newer = TrafficMeasurement(
-        source_id=uuid4(), road_segment_id=uuid4(), timestamp=base + timedelta(hours=1),
+        source_id=uuid4(),
+        road_segment_id=uuid4(),
+        timestamp=base + timedelta(hours=1),
         traffic_volume=20,
     )
     RegisterTrafficMeasurement(store, FakeEventPublisher()).execute(older)

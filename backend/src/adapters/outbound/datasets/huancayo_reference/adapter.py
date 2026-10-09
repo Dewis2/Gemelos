@@ -6,7 +6,12 @@ from functools import cached_property
 from pathlib import Path
 from typing import Any
 
-from adapters.outbound.datasets.common import file_profile, normalize_text, parse_integer, read_rows
+from adapters.outbound.datasets.common import (
+    file_profile,
+    normalize_text,
+    parse_integer,
+    read_rows,
+)
 from application.dto.peru_demo import DatasetMetadata, DatasetScope, TrafficAggregate
 
 DATASET_ID = "huancayo_historical_counts_2013"
@@ -116,7 +121,11 @@ class HuancayoHistoricalAdapter:
 
     def validate(self) -> dict[str, Any]:
         if not self.path.exists():
-            return {"valid": False, "error": "reference file not found", "path": str(self.path)}
+            return {
+                "valid": False,
+                "error": "reference file not found",
+                "path": str(self.path),
+            }
         profile = file_profile(self.path)
         rows = self._rows()
         valid_rows = [

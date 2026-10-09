@@ -24,9 +24,9 @@ def monthly_series(
     monthly = (
         pd.DataFrame(
             {
-                "period": pd.to_datetime(
-                    frame[timestamp_column], utc=True
-                ).dt.strftime("%Y-%m"),
+                "period": pd.to_datetime(frame[timestamp_column], utc=True).dt.strftime(
+                    "%Y-%m"
+                ),
                 "actual": frame[target_column].to_numpy(),
                 "predicted": predicted,
             }

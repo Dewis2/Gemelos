@@ -55,11 +55,16 @@ class PeruDemoQueryService:
             if region and (item.region or "").casefold() != region.casefold():
                 continue
             previous = latest.get(item.source_location_id)
-            previous_cut = str(previous.properties.get("FECCORTE", "")) if previous else ""
+            previous_cut = (
+                str(previous.properties.get("FECCORTE", "")) if previous else ""
+            )
             current_cut = str(item.properties.get("FECCORTE", ""))
             if previous is None or current_cut >= previous_cut:
                 latest[item.source_location_id] = item
-        return [item.to_dict() for item in sorted(latest.values(), key=lambda value: value.name)]
+        return [
+            item.to_dict()
+            for item in sorted(latest.values(), key=lambda value: value.name)
+        ]
 
     def traffic(
         self,
@@ -87,10 +92,18 @@ class PeruDemoQueryService:
             measurements = [
                 item
                 for item in self._repository.list_by_dataset(dataset_id)
-                if (not region or (item.source_region or "").casefold() == region.casefold())
+                if (
+                    not region
+                    or (item.source_region or "").casefold() == region.casefold()
+                )
                 and (not location_id or item.source_location_id == location_id)
-                and (not start_period or item.period_start[: len(start_period)] >= start_period)
-                and (not end_period or item.period_start[: len(end_period)] <= end_period)
+                and (
+                    not start_period
+                    or item.period_start[: len(start_period)] >= start_period
+                )
+                and (
+                    not end_period or item.period_start[: len(end_period)] <= end_period
+                )
                 and (not vehicle_category or item.vehicle_category == vehicle_category)
             ]
             measurements.sort(key=lambda item: (item.period_start, item.natural_key))
@@ -132,7 +145,8 @@ class PeruDemoQueryService:
         matched_flow = [
             item
             for item in flow_locations
-            if isinstance(item, dict) and str(item.get("region", "")).casefold() == "junín"
+            if isinstance(item, dict)
+            and str(item.get("region", "")).casefold() == "junín"
         ]
         geo_locations = self.locations("JUNIN")
         flow_by_code = {str(item["source_location_id"]): item for item in matched_flow}
@@ -148,7 +162,13 @@ class PeruDemoQueryService:
         return {
             "junin_filter_available": bool(matched_flow or geo_locations),
             "matched_records": (
-                len(list(flow.stream_measurements(region="JUNIN", vehicle_category="total")))
+                len(
+                    list(
+                        flow.stream_measurements(
+                            region="JUNIN", vehicle_category="total"
+                        )
+                    )
+                )
                 if flow
                 else 0
             ),
@@ -174,7 +194,9 @@ class PeruDemoQueryService:
                 for item in self.list_datasets()
                 if item["dataset_id"] != "huancayo_historical_counts_2013"
             ],
-            "local_historical_reference": self.get_dataset("huancayo_historical_counts_2013"),
+            "local_historical_reference": self.get_dataset(
+                "huancayo_historical_counts_2013"
+            ),
             "local_current_2026": {
                 "available": False,
                 "message": (
@@ -262,9 +284,13 @@ class HistoricalReplayService:
                     "api": "ready",
                 },
             )
-            self._state.add_event("dataset", f"{len(records)} registros cargados para replay")
+            self._state.add_event(
+                "dataset", f"{len(records)} registros cargados para replay"
+            )
             self._state.add_event("parser", "Validación del esquema completada")
-        self._thread = threading.Thread(target=self._run, daemon=True, name="peru-demo-replay")
+        self._thread = threading.Thread(
+            target=self._run, daemon=True, name="peru-demo-replay"
+        )
         self._thread.start()
         return self.status()
 
@@ -277,7 +303,9 @@ class HistoricalReplayService:
             with self._lock:
                 result = self._repository.upsert(item)
                 self._state.technical_status["repository"] = result
-                self._state.add_event("repository", f"Registro {result}: {item.natural_key}")
+                self._state.add_event(
+                    "repository", f"Registro {result}: {item.natural_key}"
+                )
                 emitted_at = datetime.now(UTC).isoformat()
                 payload = {
                     "dataset_id": item.dataset_id,
@@ -303,7 +331,8 @@ class HistoricalReplayService:
                     if self._mqtt_enabled:
                         self._state.technical_status["mqtt"] = "published"
                         self._state.add_event(
-                            "mqtt", f"Evento publicado en {self._topics[item.dataset_id]}"
+                            "mqtt",
+                            f"Evento publicado en {self._topics[item.dataset_id]}",
                         )
                     else:
                         self._state.add_event(
@@ -317,11 +346,15 @@ class HistoricalReplayService:
                 self._state.current_location = item.source_location_name
                 self._state.current_historical_period = item.period_start[:7]
                 self._state.vehicle_count = item.vehicle_count
-                self._state.vehicle_categories[item.vehicle_category] = item.vehicle_count
+                self._state.vehicle_categories[item.vehicle_category] = (
+                    item.vehicle_count
+                )
                 self._state.last_update = emitted_at
                 self._state.replay_position = index
                 self._state.technical_status["digital_twin_core"] = "updated"
-                self._state.add_event("digital_twin_core", "Estado de demostración actualizado")
+                self._state.add_event(
+                    "digital_twin_core", "Estado de demostración actualizado"
+                )
                 if item.dataset_scope == DatasetScope.PERU_OFFICIAL_DEMO:
                     try:
                         self._publisher.publish(
@@ -336,7 +369,9 @@ class HistoricalReplayService:
                                 "event_type": "digital_twin_demo_state_updated",
                                 "data": {
                                     "vehicle_count": item.vehicle_count,
-                                    "vehicle_categories": dict(self._state.vehicle_categories),
+                                    "vehicle_categories": dict(
+                                        self._state.vehicle_categories
+                                    ),
                                 },
                             },
                         )

@@ -8,7 +8,9 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Gemelo Digital Huancayo API"
     environment: str = "development"
-    database_url: str = "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    database_url: str = (
+        "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    )
     mqtt_host: str = "localhost"
     mqtt_port: int = 1883
     mqtt_enabled: bool = False
