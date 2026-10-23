@@ -76,7 +76,7 @@ def test_migrations_and_seed_preserve_existing_catalog(pg):
         identifier = first.id
     seed_reference_data(factory)
     with factory() as session:
-        assert session.scalar(text("SELECT version_num FROM alembic_version")) == "0002"
+        assert session.scalar(text("SELECT version_num FROM alembic_version")) == "0003"
         assert session.scalar(text("SELECT count(*) FROM intersections")) == 4
         assert session.get(IntersectionModel, identifier).name == "Nombre revisado"
         assert session.scalar(text("SELECT count(*) FROM road_segments")) == 3
