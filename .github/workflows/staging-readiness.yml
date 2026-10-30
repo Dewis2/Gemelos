@@ -16,6 +16,8 @@ jobs:
           cache: pip
       - name: Install Python tooling
         run: python -m pip install -e "./backend[dev]" pyyaml
+      - name: Diagnose root-level Black formatting
+        run: black --diff --line-length 88 backend/src/infrastructure/config/settings.py || true
       - name: Verify application and staging settings
         run: |
           ruff check backend/src backend/tests ml/src ml/tests edge
