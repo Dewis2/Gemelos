@@ -8,7 +8,9 @@ from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 class Settings(BaseSettings):
     app_name: str = "Gemelo Digital Huancayo API"
     environment: str = "development"
-    database_url: str = "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    database_url: str = (
+        "postgresql+psycopg://digital_twin:change_me@localhost:5432/digital_twin"
+    )
     mqtt_host: str = "localhost"
     mqtt_port: int = 1883
     mqtt_enabled: bool = False
@@ -37,12 +39,16 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_cloud_settings(self) -> "Settings":
         if self.environment == "staging":
-            if self.core_repository != "sqlalchemy" or self.demo_repository != "sqlalchemy":
+            if (
+                self.core_repository != "sqlalchemy"
+                or self.demo_repository != "sqlalchemy"
+            ):
                 raise ValueError("Staging requires SQLAlchemy repositories.")
             if not self.database_url.startswith("postgresql+psycopg://"):
                 raise ValueError("Staging requires a PostgreSQL URL using psycopg.")
             if any(
-                host in self.database_url for host in ("@localhost:", "@127.0.0.1:", "@postgres:")
+                host in self.database_url
+                for host in ("@localhost:", "@127.0.0.1:", "@postgres:")
             ):
                 raise ValueError("Staging needs a remote PostgreSQL host.")
             if not self.cors_origins or any(
