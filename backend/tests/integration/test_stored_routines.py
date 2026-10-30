@@ -10,11 +10,9 @@ from sqlalchemy.exc import DBAPIError
 from adapters.outbound.persistence import SqlAlchemyRoadNetworkRepository
 from infrastructure.database.seed import TEST_SOURCE_ID, seed_reference_data
 
-from tests.integration.test_postgresql import pg  # noqa: F401
-
 
 def test_stored_procedure_and_summary(pg):
-    settings, factory = pg
+    _, factory = pg
     seed_reference_data(factory)
     segment_id = SqlAlchemyRoadNetworkRepository(factory).list_segments()[0].id
     measurement_id = uuid4()
