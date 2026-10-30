@@ -1,0 +1,18 @@
+# Reproducible staging image from the monorepo root (not backend/).
+# The prototype model is generated from the external MITV-UCI dataset at build time.
+FROM python:3.12-slim
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app:/app/backend/src
+WORKDIR /app
+COPY backend/pyproject.toml /app/backend/pyproject.toml
+COPY backend/src /app/backend/src
+COPY backend/migrations /app/backend/migrations
+COPY backend/alembic.ini /app/backend/alembic.ini
+RUN python -m pip install --no-cache-dir /app/backend
+COPY ml /app/ml
+COPY data /app/data
+RUN python -m ml.scripts.fetch_mitv && python -m ml.scripts.train_and_publish
+WORKDIR /app/backend
+EXPOSE 10000
+CMD ["sh", "-c", "python -m alembic upgrade head && exec uvicorn main:app --app-dir src --host 0.0.0.0 --port ${PORT:-10000}"]
