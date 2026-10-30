@@ -1,13 +1,17 @@
 # Laboratory 11 - cloud QA/staging blueprint. A Render account and setup are required.
 # GitHub commits alone do not provision cloud services or prove test execution.
+# Both backend and database explicitly select Free; database expires after 30 days.
+# Verify the Render pricing summary before creating resources.
 databases:
   - name: gemelos-staging-postgres
+    plan: free
     databaseName: digital_twin
     user: digital_twin
 
 services:
   - type: web
     name: gemelos-staging-api
+    plan: free
     runtime: docker
     dockerfilePath: ./deploy/Dockerfile.staging.backend
     dockerContext: .
