@@ -16,6 +16,8 @@ jobs:
           cache: pip
       - name: Install Python tooling
         run: python -m pip install -e "./backend[dev]" pyyaml
+      - name: Diagnose Black remaining diff
+        run: black --diff backend/src/infrastructure/config/settings.py || true
       - name: Verify application and staging settings
         run: |
           ruff check backend/src backend/tests ml/src ml/tests edge
