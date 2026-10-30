@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
 
@@ -13,14 +13,14 @@ def normalize_measurement(payload: dict[str, Any]) -> dict[str, Any]:
     timestamp = (
         datetime.fromisoformat(str(timestamp_value))
         if timestamp_value
-        else datetime.now(timezone.utc)
+        else datetime.now(UTC)
     )
     if timestamp.tzinfo is None:
-        timestamp = timestamp.replace(tzinfo=timezone.utc)
+        timestamp = timestamp.replace(tzinfo=UTC)
     return {
         "source_id": source_id,
         "road_segment_id": segment_id,
-        "timestamp": timestamp.astimezone(timezone.utc).isoformat(),
+        "timestamp": timestamp.astimezone(UTC).isoformat(),
         "traffic_volume": volume,
         "average_speed": payload.get("average_speed"),
         "occupancy": payload.get("occupancy"),
