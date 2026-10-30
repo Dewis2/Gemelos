@@ -1,0 +1,52 @@
+# Laboratory 11 - cloud QA/staging blueprint. A Render account and setup are required.
+# GitHub commits alone do not provision cloud services or prove test execution.
+databases:
+  - name: gemelos-staging-postgres
+    databaseName: digital_twin
+    user: digital_twin
+
+services:
+  - type: web
+    name: gemelos-staging-api
+    runtime: docker
+    dockerfilePath: ./deploy/Dockerfile.staging.backend
+    dockerContext: .
+    branch: main
+    autoDeployTrigger: checksPass
+    healthCheckPath: /health
+    envVars:
+      - key: ENVIRONMENT
+        value: staging
+      - key: DATABASE_URL
+        fromDatabase:
+          name: gemelos-staging-postgres
+          property: connectionString
+      - key: CORE_REPOSITORY
+        value: sqlalchemy
+      - key: DEMO_REPOSITORY
+        value: sqlalchemy
+      - key: DATA_ROOT
+        value: /app/data
+      - key: ML_MODEL_PATH
+        value: /app/ml/models/traffic_model.joblib
+      - key: DEMO_ML_METADATA_PATH
+        value: /app/ml/models/demo_peru/metadata.json
+      - key: MQTT_ENABLED
+        value: "false"
+      - key: CORS_ORIGINS
+        sync: false
+  - type: web
+    name: gemelos-staging-frontend
+    runtime: static
+    rootDir: frontend
+    branch: main
+    buildCommand: npm ci && node scripts/check-staging-env.mjs && npm run build
+    staticPublishPath: dist
+    autoDeployTrigger: checksPass
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
