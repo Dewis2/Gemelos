@@ -25,7 +25,6 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-
     @field_validator("database_url", mode="before")
     @classmethod
     def normalize_postgres_url(cls, value: object) -> object:
@@ -44,7 +43,10 @@ class Settings(BaseSettings):
                 raise ValueError("Staging requires SQLAlchemy repositories.")
             if not self.database_url.startswith("postgresql+psycopg://"):
                 raise ValueError("Staging requires a PostgreSQL URL using psycopg.")
-            if any(host in self.database_url for host in ("@localhost:", "@127.0.0.1:", "@postgres:")):
+            if any(
+                host in self.database_url
+                for host in ("@localhost:", "@127.0.0.1:", "@postgres:")
+            ):
                 raise ValueError("Staging needs a remote PostgreSQL host.")
             if not self.cors_origins or any(
                 not origin.startswith("https://") for origin in self.cors_origins
