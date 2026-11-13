@@ -27,6 +27,8 @@ Configurar `BACKUP_DATABASE_URL` **solo en la sesión local** y ejecutar:
 
 No subir la copia ni la variable de conexión al repositorio. Comprobar el tamaño, el manifiesto y una restauración en una base vacía y aislada antes de considerar el respaldo válido. El archivo de 0 bytes generado anteriormente con `pg_dump` 17 no sirve. Cambiar la contraseña de Render que se expuso en la conversación anterior mediante la consola de Render, sin publicarla.
 
+En DBeaver: configurar primero la conexión PostgreSQL de Render en la propia aplicación; en **Herramientas → Backup**, escoger el cliente local `C:\Program Files\PostgreSQL\18`, formato **Custom** y una ruta privada. Después verificar que la tarea terminó sin errores, ejecutar `pg_restore --list` con la versión 18 y restaurar la copia en una base vacía de ensayo. La lista actual de conexiones de DBeaver no contiene Render; no se hizo ninguna copia remota en esta sesión.
+
 ### Migración y pruebas de base
 
 Crear una base propia terminada en `_test`, instalar PostGIS y apuntar a ella `DATABASE_URL` y `TEST_DATABASE_URL`. Aplicar `alembic upgrade head`. La fixture de integración trunca tablas: **nunca** apuntar `TEST_DATABASE_URL` a Render o una base con datos que deban conservarse.
