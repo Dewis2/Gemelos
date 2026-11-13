@@ -5,8 +5,8 @@ observar, predecir y simular —de forma progresiva— la movilidad del corredor
 Av. Ferrocarril entre la Av. Giráldez y la Av. Huancavelica, Huancayo, Perú.
 
 > **Estado: prototipo / PMV.** No existen en este repositorio aforos locales actuales
-> de 2026, sensores instalados, una red SUMO validada ni resultados experimentales.
-> Toda métrica futura deberá acompañarse de datos, método y evidencia reproducible.
+> de 2026, sensores instalados ni una red SUMO calibrada. Se incluye una simulación
+> exploratoria OSM/SUMO con viajes sintéticos; no representa tráfico observado.
 
 ## Problema y objetivo
 
@@ -217,7 +217,7 @@ docs/          arquitectura, base de datos, API, datasets y ADR
 edge/          colector mock, normalización y buffer
 frontend/      PMV React con arquitectura hexagonal
 ml/            features, división temporal, entrenamiento, evaluación e inferencia
-simulation/    estructura SUMO/TraCI sin geometría ficticia
+simulation/    estudio exploratorio OSM/SUMO y adaptador TraCI opcional
 scripts/       comandos auxiliares
 ```
 
@@ -226,7 +226,7 @@ scripts/       comandos auxiliares
 - Python 3.12 o superior.
 - Node.js 22+ para el frontend.
 - Docker Desktop y Compose para PostgreSQL/Mosquitto.
-- SUMO solo para ejecutar simulaciones reales, después de validar la red.
+- SUMO 1.28 opcional para reproducir la simulación exploratoria (`simulation/requirements.txt`).
 
 ## Instalación local
 
@@ -423,9 +423,12 @@ tráfico actual de Huancayo en 2026. Consulte [la guía completa](docs/demo-peru
 avanzar pasos y consultar vehículos, velocidad y cola. La ausencia de SUMO/TraCI o
 de `.sumocfg` produce un error controlado. `FakeTrafficSimulator` soporta tests.
 
-SUMO queda fuera del contenedor inicial: aún no existe una topología validada y su
-instalación elevaría innecesariamente el peso de la PoC. Consulte
-[simulation/README.md](simulation/README.md).
+El repositorio incluye una extracción OSM, red SUMO y tres ejecuciones sintéticas
+reproducibles, visibles en **Escenarios**. El backend y el contenedor inicial siguen
+usando `FakeTrafficSimulator`; este estudio separado no calibra el corredor.
+Consulte [simulation/README.md](simulation/README.md). La geometría OSM derivada
+está sujeta a ODbL 1.0 y atribución a OpenStreetMap, independientemente de la
+licencia MIT del código.
 
 ## Datasets
 
@@ -485,14 +488,15 @@ dashboard final, reportes y documentación de evidencia.
 - Datos locales actuales: pendientes. Los nueve aforos disponibles son de 2013.
 - Modelo entrenado: disponible como PoC técnica sobre MITV-UCI (Minnesota). **No está
   validado con datos locales de Huancayo** y no distingue segmentos del corredor.
-- Simulación: los escenarios se crean y se ejecutan, pero el adaptador activo no produce
-  métricas físicas; las cifras que devuelve son ceros por construcción y la interfaz las
-  marca como marcador de posición.
-- SUMO/TraCI: implementado como adaptador, no operativo (requiere topología validada y
-  un `.sumocfg`; no se incluye en el contenedor).
+- Simulación: los endpoints de escenarios siguen usando el adaptador de prueba y
+  muestran sus ceros como marcadores de posición. Por separado, la página **Escenarios**
+  presenta tres ejecuciones OSM/SUMO exploratorias con viajes sintéticos y métricas
+  reales del simulador, sin atribuirlas al tráfico observado.
+- SUMO/TraCI: el adaptador TraCI no se activa en el contenedor. La ejecución OSM/SUMO
+  reproducible se realiza con `simulation/build_osm_exploration.py`.
 - Persistencia configurable con CORE_REPOSITORY y DEMO_REPOSITORY; plantillas PostgreSQL.
 - MQTT es opcional; el cliente se cierra al terminar FastAPI. No se validó el broker en la instalación nativa.
-- Calibración/validación SUMO, seguridad y rendimiento: por medir.
+- Calibración con aforos locales, seguridad y rendimiento del despliegue: por medir.
 - El mapa muestra un aviso y no dibuja geometría ficticia.
 
 ## Equipo

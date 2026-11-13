@@ -1,4 +1,4 @@
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, type FormEvent, useEffect, useMemo, useState } from "react";
 import type { SimulationResult, SimulationScenario } from "../../domain/models";
 import {
   DEFAULT_SIMULATION_STEPS,
@@ -15,6 +15,10 @@ import {
 import { useApplication } from "../ApplicationContext";
 import { DataProvenanceNotice } from "../components/DataProvenanceNotice";
 import { SourceTag } from "../components/SourceTag";
+
+const ExploratorySumoPanel = lazy(() =>
+  import("../components/ExploratorySumoPanel").then((module) => ({ default: module.ExploratorySumoPanel })),
+);
 
 const formatNumber = new Intl.NumberFormat("es-PE", { maximumFractionDigits: 2 });
 
@@ -114,18 +118,21 @@ export function ScenariosPage() {
         <p className="eyebrow">Simulación</p>
         <h2>Escenarios what-if</h2>
         <p>
-          Registra la configuración de un escenario en el backend y solicita su ejecución. Solo se envían los parámetros que el simulador actual admite.
+          Explora ejecuciones reproducibles en SUMO y consulta por separado los escenarios técnicos registrados en el backend.
         </p>
       </header>
 
       <DataProvenanceNotice category="simulated">
-        Fuente: simulación. Los resultados no son mediciones del corredor Av. Ferrocarril ni observación de campo.
+        Fuente: OpenStreetMap y demanda sintética para la simulación exploratoria. No son mediciones del corredor ni observación de campo.
       </DataProvenanceNotice>
 
-      {error && <div className="error-box" role="alert">{error}</div>}
+      <Suspense fallback={<section className="panel">Cargando simulación exploratoria…</section>}>
+        <ExploratorySumoPanel />
+      </Suspense>
 
       <section className="panel">
-        <h3>Escenarios guardados</h3>
+        <h3>Escenarios técnicos guardados en el backend</h3>
+        {error && <div className="error-box" role="alert">{error}</div>}
         {saved.length === 0 ? <p>No hay escenarios guardados disponibles.</p> : (
           <ul>{saved.map((item) => <li key={item.id}>
             <button type="button" disabled={phase === "running"} onClick={() => void restore(item)}>
@@ -136,7 +143,7 @@ export function ScenariosPage() {
       </section>
 
       <section className="panel">
-        <h3>Tipos de escenario disponibles</h3>
+        <h3>Configuraciones del adaptador de prueba</h3>
         <div className="preset-grid">
           {SCENARIO_PRESETS.map((preset) => (
             <button

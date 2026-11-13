@@ -112,7 +112,7 @@ export function DashboardPage() {
           <strong>{overview.twin.road_segment_count} tramos en el gemelo</strong>
           <SourceTag category="simulated" />
           <small className="kpi-source">
-            El escenario se crea y se ejecuta de extremo a extremo, pero el simulador actual no produce métricas físicas.
+            La API de escenarios usa un adaptador de prueba; la página incluye además una simulación exploratoria OSM/SUMO con métricas separadas.
             <Link to="/escenarios"> Ir a Escenarios</Link>
           </small>
         </article>

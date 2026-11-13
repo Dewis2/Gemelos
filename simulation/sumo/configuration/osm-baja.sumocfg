@@ -1,0 +1,2 @@
+<?xml version='1.0' encoding='utf-8'?>
+<configuration><input><net-file value="..\networks\huancayo-exploratory.net.xml" /><route-files value="..\routes\osm-8.rou.xml" /></input><time><begin value="0" /><end value="1800" /></time></configuration>

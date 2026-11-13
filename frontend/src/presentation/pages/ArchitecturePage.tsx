@@ -99,9 +99,9 @@ export function ArchitecturePage() {
       {
         name: "SUMO / TraCI",
         role: "Simulación de escenarios",
-        status: "pendiente",
+        status: "parcial",
         evidence:
-          "No operativa: el gemelo usa un adaptador de prueba determinista. No existe topología validada ni archivo .sumocfg.",
+          "Tres ejecuciones OSM/SUMO exploratorias reproducibles; la API aún usa un adaptador de prueba y la red no está calibrada.",
       },
     ];
   }, [overview, ml]);
@@ -159,7 +159,7 @@ export function ArchitecturePage() {
       <section className="panel">
         <h3>Piezas aún no operativas</h3>
         <ul className="warning-list">
-          <li>SUMO / TraCI no está conectado: la simulación usa un adaptador de prueba y no produce métricas físicas.</li>
+          <li>Los endpoints de escenarios aún usan un adaptador de prueba. El estudio OSM/SUMO de la página Escenarios se ejecuta por separado y no está calibrado.</li>
           <li>La geometría del corredor sigue en estado {overview?.twin.geometry_status ?? "pending_validation"}; el mapa es esquemático.</li>
           <li>No existen datos locales actuales de la Av. Ferrocarril: los aforos disponibles son históricos de 2013.</li>
           <li>El modelo publicado no ha sido validado con datos locales de Huancayo.</li>
