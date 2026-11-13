@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -14,6 +15,11 @@ from sklearn.linear_model import LinearRegression
 from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+
+from ml.src.training.provenance import register_run
 
 
 def metrics(y_true: pd.Series, y_pred: np.ndarray) -> dict[str, float | None]:
@@ -144,12 +150,13 @@ def run(data_path: Path, output_dir: Path) -> dict[str, object]:
         "metrics": scores,
         "selected_model": best_name,
         "prediction_series": prediction_series,
-        "model_artifact": str(model_path),
+        "model_artifact": model_path.name,
     }
+    registered = register_run(metadata, data_path, model_path)
     (output_dir / "metadata.json").write_text(
-        json.dumps(metadata, indent=2, ensure_ascii=False), encoding="utf-8"
+        json.dumps(registered, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
     )
-    return metadata
+    return registered
 
 
 def main() -> int:

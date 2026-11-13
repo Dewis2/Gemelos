@@ -1,8 +1,9 @@
+import json
 from datetime import datetime
 from typing import Any
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class IntersectionResponse(BaseModel):
@@ -57,6 +58,28 @@ class ScenarioCreate(BaseModel):
     name: str = Field(min_length=1, max_length=150)
     description: str = Field(default="", max_length=1000)
     configuration: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("configuration")
+    @classmethod
+    def validate_configuration(cls, value: dict[str, Any]) -> dict[str, Any]:
+        try:
+            encoded = json.dumps(value, allow_nan=False).encode("utf-8")
+        except (TypeError, ValueError) as exc:
+            raise ValueError(
+                "Scenario configuration must contain finite JSON values"
+            ) from exc
+        if len(encoded) > 16_384:
+            raise ValueError("Scenario configuration exceeds 16 KiB")
+        steps = value.get("steps", 1)
+        if (
+            isinstance(steps, bool)
+            or not isinstance(steps, int)
+            or not 1 <= steps <= 10_000
+        ):
+            raise ValueError("steps must be an integer between 1 and 10000")
+        if not isinstance(value.get("demand", {}), dict):
+            raise ValueError("demand must be an object")
+        return value
 
 
 class ScenarioResponse(ScenarioCreate):

@@ -1,16 +1,13 @@
 """Opt-in tests against a dedicated, migrated PostgreSQL/PostGIS database."""
 
-import os
 from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID, uuid4
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, select, text
-from sqlalchemy.engine import make_url
+from sqlalchemy import select, text
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.orm import sessionmaker
 
 from adapters.inbound.api import create_app
 from adapters.outbound.datasets import HuancayoHistoricalAdapter
@@ -19,7 +16,6 @@ from adapters.outbound.persistence import (
     SqlAlchemyTrafficAggregateRepository,
 )
 from domain.entities import TrafficPrediction
-from infrastructure.config import Settings
 from infrastructure.database.models import (
     IntersectionModel,
     SimulationScenarioModel,
@@ -31,42 +27,6 @@ from infrastructure.database.seed import TEST_SOURCE_ID, seed_reference_data
 ROOT = Path(__file__).resolve().parents[3]
 
 
-@pytest.fixture
-def pg():
-    url = os.environ.get("TEST_DATABASE_URL")
-    if not url:
-        pytest.skip(
-            "Set TEST_DATABASE_URL to a dedicated migrated database ending in _test"
-        )
-    if not (make_url(url).database or "").endswith("_test"):
-        pytest.fail("Refusing to test against a database without the _test suffix")
-    engine = create_engine(url, pool_pre_ping=True)
-    factory = sessionmaker(engine, expire_on_commit=False)
-    # Only test-owned application tables, never production or PostGIS catalogs.
-    with engine.begin() as connection:
-        connection.execute(text("SET LOCAL lock_timeout = '5s'"))
-        connection.execute(
-            text(
-                "TRUNCATE simulation_results, traffic_predictions, traffic_measurements, "
-                "traffic_signal_plans, simulation_scenarios, road_segments, intersections, "
-                "data_sources, traffic_aggregates, traffic_locations, dataset_ingestion_runs"
-            )
-        )
-    settings = Settings(
-        _env_file=None,
-        database_url=url,
-        core_repository="sqlalchemy",
-        demo_repository="sqlalchemy",
-        mqtt_enabled=False,
-        data_root=str(ROOT / "data"),
-        ml_model_path="nonexistent-test-model.joblib",
-    )
-    try:
-        yield settings, factory
-    finally:
-        engine.dispose()
-
-
 def test_migrations_and_seed_preserve_existing_catalog(pg):
     _, factory = pg
     seed_reference_data(factory)
@@ -76,7 +36,7 @@ def test_migrations_and_seed_preserve_existing_catalog(pg):
         identifier = first.id
     seed_reference_data(factory)
     with factory() as session:
-        assert session.scalar(text("SELECT version_num FROM alembic_version")) == "0002"
+        assert session.scalar(text("SELECT version_num FROM alembic_version")) == "0003"
         assert session.scalar(text("SELECT count(*) FROM intersections")) == 4
         assert session.get(IntersectionModel, identifier).name == "Nombre revisado"
         assert session.scalar(text("SELECT count(*) FROM road_segments")) == 3
