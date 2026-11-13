@@ -30,6 +30,14 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
     app.state.container = ApplicationContainer(resolved)
 
+    @app.middleware("http")
+    async def response_security_headers(request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Cache-Control"] = "no-store"
+        return response
+
     @app.exception_handler(IntegrityError)
     async def integrity_error(_request, _exc):
         return JSONResponse(

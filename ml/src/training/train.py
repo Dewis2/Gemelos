@@ -12,6 +12,7 @@ from sklearn.linear_model import LinearRegression
 from ml.src.evaluation.evaluate import regression_metrics
 from ml.src.features.features import CALENDAR_FEATURES, build_time_features
 from ml.src.preprocessing.temporal import temporal_split
+from ml.src.training.provenance import register_run
 
 
 def monthly_series(
@@ -66,7 +67,7 @@ def train(
     predicted = estimator.predict(test_frame[feature_columns])
     output.parent.mkdir(parents=True, exist_ok=True)
     joblib.dump(estimator, output)
-    return {
+    result = {
         "model": model_name,
         "features": feature_columns,
         "train_rows": len(train_frame),
@@ -87,6 +88,11 @@ def train(
         ),
         "notice": "Technical experiment only; not a validation for Huancayo 2026.",
     }
+    registered = register_run(result, dataset, output)
+    output.with_suffix(".metadata.json").write_text(
+        json.dumps(registered, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
+    )
+    return registered
 
 
 def main() -> None:
