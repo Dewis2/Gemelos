@@ -1,0 +1,74 @@
+{
+  "study_type": "exploratory_uncalibrated",
+  "generated_at_utc": "2026-11-13T22:15:35.023510+00:00",
+  "source": {
+    "name": "OpenStreetMap contributors",
+    "url": "https://api.openstreetmap.org/api/0.6/map?bbox=-75.220,-12.073,-75.200,-12.060",
+    "license": "ODbL 1.0",
+    "attribution_url": "https://www.openstreetmap.org/copyright",
+    "snapshot_sha256": "141c9f6ede92f5015b4687f8a69d73c575e35b2eca72acca2bdd4b7712346b29",
+    "bbox_west_south_east_north": [
+      -75.22,
+      -12.073,
+      -75.2,
+      -12.06
+    ]
+  },
+  "software": {
+    "sumo": "Eclipse SUMO sumo 1.28.0",
+    "seed": 30167
+  },
+  "network": {
+    "passenger_edges": 1451,
+    "ferrocarril_edges": 59,
+    "network_sha256": "43bfd9195be84e1e584021ace253358f8132ebc3e7cb6b09a1c33e7b88afcc35",
+    "map_sha256": "b839969592fc9762d5a2264d64005a91cf142f72d3df5d827878b581a5ebe380"
+  },
+  "time": {
+    "departure_end_seconds": 900,
+    "simulation_end_seconds": 1800
+  },
+  "scenarios": {
+    "baja": {
+      "synthetic_departure_interval_seconds": 8,
+      "routes_generated": 113,
+      "vehicles_inserted": 113,
+      "vehicles_arrived": 113,
+      "vehicles_remaining": 0,
+      "mean_trip_duration_seconds": 168.61,
+      "mean_waiting_seconds": 34.27,
+      "mean_time_loss_seconds": 62.52,
+      "mean_trip_speed_kmh": 36.34,
+      "route_sha256": "cf2865d38f59c4912cd1a745c7e81588fa13e34412ad13c79c500ded1dd71b6b"
+    },
+    "normal": {
+      "synthetic_departure_interval_seconds": 4,
+      "routes_generated": 225,
+      "vehicles_inserted": 225,
+      "vehicles_arrived": 225,
+      "vehicles_remaining": 0,
+      "mean_trip_duration_seconds": 182.52,
+      "mean_waiting_seconds": 42.89,
+      "mean_time_loss_seconds": 74.01,
+      "mean_trip_speed_kmh": 34.37,
+      "route_sha256": "7ae30415d0267dc549ed66642746bd256c412ac7802e81fb26a4422d65d95427"
+    },
+    "alta": {
+      "synthetic_departure_interval_seconds": 2,
+      "routes_generated": 450,
+      "vehicles_inserted": 450,
+      "vehicles_arrived": 450,
+      "vehicles_remaining": 0,
+      "mean_trip_duration_seconds": 192.16,
+      "mean_waiting_seconds": 46.67,
+      "mean_time_loss_seconds": 80.89,
+      "mean_trip_speed_kmh": 33.64,
+      "route_sha256": "a8e400006744d7eccb10858484384e9d01daa08559543dee455216c27b159947"
+    }
+  },
+  "limitations": [
+    "Viajes generados aleatoriamente; los intervalos no proceden de aforos.",
+    "La red OSM es colaborativa y no constituye geometría oficial certificada.",
+    "Los resultados no calibran ni predicen el tráfico real de 2026 en Av. Ferrocarril."
+  ]
+}
