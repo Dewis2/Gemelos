@@ -1,0 +1,28 @@
+Gemelos | Verificación local | 2026-11-13T18:00:45-05:00
+> npm --prefix frontend test
+
+> gemelo-digital-huancayo-frontend@0.1.0 test
+> tsc -b --pretty false && node scripts/check-architecture.mjs
+
+Arquitectura frontend: dependencias válidas.
+
+
+Código de salida: 0
+> npm --prefix frontend run build
+
+> gemelo-digital-huancayo-frontend@0.1.0 build
+> tsc -b && vite build
+
+vite v6.4.3 building for production...
+transforming...
+✓ 111 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                 0.51 kB │ gzip:   0.31 kB
+dist/assets/index-pMIwF-Vd.css                 37.56 kB │ gzip:  11.42 kB
+dist/assets/ExploratorySumoPanel-BnjkBQmU.js  347.12 kB │ gzip:  71.95 kB
+dist/assets/index-DAER8KqU.js                 489.08 kB │ gzip: 149.26 kB
+✓ built in 2.46s
+
+
+Código de salida: 0

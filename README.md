@@ -8,6 +8,10 @@ Av. Ferrocarril entre la Av. Giráldez y la Av. Huancavelica, Huancayo, Perú.
 > de 2026, sensores instalados ni una red SUMO calibrada. Se incluye una simulación
 > exploratoria OSM/SUMO con viajes sintéticos; no representa tráfico observado.
 
+El [informe editable de PMV1, PMV2 y PMV3](docs/informes/Informe_PMV1_PMV2_PMV3_2026-11-13.docx)
+incluye historias de usuario, resultados y capturas. Los archivos de evidencia y su
+procedencia están en [docs/evidencias/2026-11-13](docs/evidencias/2026-11-13/README.md).
+
 ## Problema y objetivo
 
 La información de movilidad suele estar fragmentada entre mediciones, modelos y

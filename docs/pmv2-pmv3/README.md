@@ -1,5 +1,10 @@
 # PMV2 y PMV3: implementación y evidencia (13 de noviembre de 2026)
 
+El [informe editable consolidado](../informes/Informe_PMV1_PMV2_PMV3_2026-11-13.docx)
+separa PMV1, PMV2 y PMV3 por historia de usuario e incorpora capturas nuevas del
+despliegue y de la simulación exploratoria OSM/SUMO. Esta simulación ejecuta viajes
+sintéticos reproducibles, pero sigue sin calibración con aforos locales actuales.
+
 ## Alcance verificado
 
 | Trabajo | Estado y evidencia |
