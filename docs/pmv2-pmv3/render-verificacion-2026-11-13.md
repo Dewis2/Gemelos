@@ -40,4 +40,6 @@ Se consultaron los conteos de las tablas de aplicación tanto en Render como en 
 
 La consulta de Render mostró `alembic_version = 0003`, PostGIS instalado y ambas rutinas de la revisión `0003`. Una llamada de solo lectura a `fn_traffic_summary` respondió `0` mediciones y `0` vehículos para un tramo existente y un intervalo de 2026, coherente con la tabla vacía. **La migración ya estaba aplicada antes de esta verificación; no se volvió a ejecutar.**
 
+La API desplegada respondió `HTTP 200` en `/health` con `{"status":"ok","stage":"prototype"}` después de la verificación de base de datos.
+
 Los conteos verifican la restauración a nivel de tablas de aplicación en el momento de la consulta; no sustituyen una comparación fila por fila. Esta verificación tampoco aporta aforos locales de 2026 ni valida la simulación del corredor.
