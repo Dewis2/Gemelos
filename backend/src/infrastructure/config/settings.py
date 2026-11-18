@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 from typing import Annotated, Literal
 
 from pydantic import field_validator, model_validator
@@ -22,8 +23,16 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     ml_model_path: str = "../ml/models/traffic_model.joblib"
     sumo_binary: str = "sumo"
-    sumo_assets_root: str = "../simulation/sumo"
-    sumo_report_path: str = "../frontend/src/data/osm-exploratory-report.json"
+    sumo_assets_root: str = str(
+        Path(__file__).resolve().parents[4] / "simulation" / "sumo"
+    )
+    sumo_report_path: str = str(
+        Path(__file__).resolve().parents[4]
+        / "frontend"
+        / "src"
+        / "data"
+        / "osm-exploratory-report.json"
+    )
     auth_required: bool = False
     auth_username: str = "editor"
     auth_password_hash: str = ""

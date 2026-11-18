@@ -4,7 +4,8 @@
 
 La API ejecuta únicamente `baja`, `normal` o `alta` desde los `.sumocfg` y `.rou.xml`
 versionados. Antes de ejecutar, comprueba SHA-256 de red y ruta contra el reporte
-publicado. Solo admite una ejecución simultánea. Usa la semilla 30167 y un límite de 90 segundos. Devuelve viajes
+publicado, normalizando los finales de línea XML a LF. Solo admite una ejecución
+simultánea. Usa la semilla 30167 y un límite de 90 segundos. Devuelve viajes
 insertados/finalizados, duración, espera, pérdida de tiempo y velocidad media de
 viaje, calculados desde `tripinfo` y `summary` de SUMO. Los archivos temporales se
 eliminan al terminar. La respuesta tiene `study_type: exploratory_uncalibrated`.

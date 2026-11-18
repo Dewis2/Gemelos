@@ -75,7 +75,8 @@ class ExploratorySumoRunner:
         ):
             if (
                 not file.is_file()
-                or hashlib.sha256(file.read_bytes()).hexdigest() != expected_hash
+                or hashlib.sha256(file.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+                != expected_hash
             ):
                 raise ExploratorySumoError(
                     f"Activo SUMO ausente o modificado: {file.name}"

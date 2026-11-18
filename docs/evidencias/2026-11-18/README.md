@@ -4,7 +4,7 @@
 
 | Comprobación | Resultado |
 | --- | --- |
-| Backend `python -m pytest backend/tests -q` | 81 pasadas, 12 omitidas (PostgreSQL opcional) |
+| Backend `python -m pytest backend/tests -q` | 82 pasadas, 12 omitidas (PostgreSQL opcional) |
 | Frontend `npm --prefix frontend run test` | Dependencias de arquitectura válidas |
 | Frontend `npm --prefix frontend run build` | Compilación de producción correcta |
 | Ruff y MyPy | Sin errores |
@@ -12,12 +12,20 @@
 | SUMO 1.28 dentro de la imagen Linux | 113, 225 y 450 viajes finalizados en baja, normal y alta |
 | SUMO alta con límite de memoria de 512 MiB | 450 viajes finalizados |
 | Autenticación local | GET público, POST sin token 401, login válido y POST con token aceptado, token alterado 401 |
+| Interfaz local `/escenarios` | Botón de ejecución normal pasó a «Resultado recién calculado por SUMO» y mostró semilla 30167 y hashes de red/ruta |
 
 El primer arranque del binario SUMO en `python:3.12-slim` reveló bibliotecas
 compartidas ausentes (`libX11`, `libXext`, `libXrender`, `libGL`, `libatomic` y
 `libexpat`). Se añadieron al Dockerfile y se repitió la ejecución en Linux con
 los tres escenarios. El ensayo de 512 MiB ejecutó únicamente el proceso de
 simulación; no es una medida del servicio completo conectado a PostgreSQL.
+
+La primera prueba desde el navegador local reveló una ruta relativa incorrecta
+cuando el backend se iniciaba desde la raíz. Se resolvieron los activos desde
+la ubicación del paquete y se repitió la ejecución normal con resultado correcto.
+En GitHub Actions, la primera reproducción detectó que Git normalizaba a LF
+los XML generados en Windows, por lo que el SHA-256 de bytes difería. El
+reporte y el verificador ahora calculan SHA-256 sobre XML con LF canónico.
 
 ## Servicio publicado antes de esta revisión
 

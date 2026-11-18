@@ -34,8 +34,10 @@ SOURCE_URL = (
 
 
 def sha256(path: Path) -> str:
-    with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+    content = path.read_bytes()
+    if path.suffix == ".xml":
+        content = content.replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 def remove_generated_comments(path: Path) -> None:
@@ -270,6 +272,7 @@ def build() -> dict[str, Any]:
     ).stdout.splitlines()[0]
     report = {
         "study_type": "exploratory_uncalibrated",
+        "hash_normalization": "xml_line_endings_lf",
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "source": {
             "name": "OpenStreetMap contributors",

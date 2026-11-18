@@ -61,7 +61,8 @@ carriles. No se calcula GEH, porque faltan conteos observados comparables.
 Los tres escenarios terminaron con cero vehículos pendientes. El reporte JSON
 contiene los hashes de la extracción, la red y las rutas, además de los parámetros
 de ejecución. Los comentarios de SUMO con marcas de hora y rutas del equipo se
-eliminan de los XML publicados para que sus hashes sean estables al regenerarlos.
+eliminan de los XML publicados. Para que los hashes coincidan en Windows y Linux,
+los finales de línea XML se normalizan a LF antes de calcular SHA-256.
 
 ## Separación de alcance
 

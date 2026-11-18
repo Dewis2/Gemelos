@@ -1,9 +1,17 @@
 """Cloud configuration rules and provider-issued Postgres URLs."""
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from infrastructure.config import Settings
+
+
+def test_default_sumo_assets_are_resolved_from_project_root():
+    settings = Settings(_env_file=None)
+    assert Path(settings.sumo_assets_root).is_dir()
+    assert Path(settings.sumo_report_path).is_file()
 
 
 def test_render_postgres_dsn_uses_installed_psycopg_driver():
