@@ -24,6 +24,9 @@ def test_staging_requires_sql_and_https_frontend():
         core_repository="sqlalchemy",
         demo_repository="sqlalchemy",
         cors_origins=["https://gemelos-staging-frontend.onrender.com"],
+        auth_required=True,
+        auth_password_hash="scrypt$16384$8$1$" + "00" * 16 + "$" + "00" * 64,
+        auth_secret="x" * 32,
     )
     assert settings.database_url.startswith("postgresql+psycopg://")
 
@@ -45,6 +48,9 @@ def test_staging_rejects_local_services(changes):
         core_repository="sqlalchemy",
         demo_repository="sqlalchemy",
         cors_origins=["https://gemelos-staging-frontend.onrender.com"],
+        auth_required=True,
+        auth_password_hash="scrypt$16384$8$1$" + "00" * 16 + "$" + "00" * 64,
+        auth_secret="x" * 32,
     )
     arguments.update(changes)
     with pytest.raises(ValidationError):

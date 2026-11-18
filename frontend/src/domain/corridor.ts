@@ -140,10 +140,10 @@ export const SIMULATION_COMPONENTS = {
       "Devuelve indicadores constantes: travel_time y delay se fijan a 0 y emissions a vacío en el caso de uso, y el adaptador no calcula velocidad ni cola. No es un motor de simulación.",
   },
   sumo: {
-    name: "SUMO / TraCI",
-    role: "Simulador previsto para escenarios",
+    name: "SUMO CLI",
+    role: "Simulación exploratoria OSM",
     notice:
-      "Implementado como adaptador pero no operativo: requiere un archivo .sumocfg validado y una topología del corredor, y no se incluye en el contenedor.",
+      "La API ejecuta tres configuraciones OSM/SUMO versionadas con viajes sintéticos. Los promedios describen la red experimental completa y no el tráfico medido del corredor.",
   },
 } as const;
 

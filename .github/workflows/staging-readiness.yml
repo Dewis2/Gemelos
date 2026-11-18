@@ -21,6 +21,12 @@ jobs:
           ruff check backend/src backend/tests ml/src ml/tests edge
           mypy backend/src
           python -m pytest
+      - name: Reproduce OSM/SUMO metrics with the real binary
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-6 libxext6 libxrender1 libgl1 libatomic1 libexpat1
+          python -m pip install eclipse-sumo==1.28.0
+          python -m pytest backend/tests/integration/test_exploratory_sumo.py -q
       - name: Validate Render blueprint syntax and staging values
         run: |
           python - <<'PY'
@@ -31,6 +37,11 @@ jobs:
           assert len(blueprint["services"]) == 2
           for service in blueprint["services"]:
               assert service["autoDeployTrigger"] == "checksPass"
+          api = next(service for service in blueprint["services"] if service["name"] == "gemelos-staging-api")
+          values = {entry["key"]: entry for entry in api["envVars"] if "key" in entry}
+          assert values["AUTH_REQUIRED"]["value"] == "true"
+          assert values["AUTH_SECRET"]["generateValue"] is True
+          assert values["AUTH_PASSWORD_HASH"]["sync"] is False
           print("Blueprint structure verified; cloud provisioning still required.")
           PY
       - uses: actions/setup-node@v4

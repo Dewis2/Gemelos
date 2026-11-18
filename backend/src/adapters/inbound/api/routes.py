@@ -1,5 +1,6 @@
 from typing import Annotated, Any
 from uuid import UUID
+from xml.etree import ElementTree as ET
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 
@@ -7,6 +8,7 @@ from adapters.inbound.api.container import ApplicationContainer
 from adapters.inbound.api.dependencies import get_container
 from adapters.inbound.api.schemas import (
     DigitalTwinStateResponse,
+    EditorLogin,
     IntersectionResponse,
     PredictionCreate,
     PredictionResponse,
@@ -19,12 +21,55 @@ from adapters.inbound.api.schemas import (
     TrafficMeasurementResponse,
 )
 from adapters.outbound.ml.joblib_model import ModelNotReadyError
+from adapters.outbound.sumo.exploratory import (
+    ExploratorySumoBusyError,
+    ExploratorySumoError,
+)
 from application.dto import PredictionRequest
 from domain.entities import SimulationScenario, TrafficMeasurement
 from domain.exceptions import DomainValidationError, EntityNotFoundError
+from infrastructure.auth import issue_token, verify_password
 
 Container = Annotated[ApplicationContainer, Depends(get_container)]
 router = APIRouter()
+
+
+@router.post("/api/v1/auth/login", tags=["auth"])
+def editor_login(payload: EditorLogin, container: Container) -> dict[str, str | int]:
+    settings = container.settings
+    if (
+        not settings.auth_required
+        or payload.username != settings.auth_username
+        or not verify_password(payload.password, settings.auth_password_hash)
+    ):
+        raise HTTPException(status_code=401, detail="Credenciales incorrectas")
+    return {
+        "access_token": issue_token(settings.auth_username, settings.auth_secret),
+        "token_type": "bearer",
+        "expires_in": 28800,
+    }
+
+
+@router.get("/api/v1/simulations/exploratory", tags=["simulations"])
+def exploratory_report(container: Container) -> dict[str, Any]:
+    try:
+        return container.exploratory_sumo.report()
+    except (OSError, ValueError) as exc:
+        raise HTTPException(
+            status_code=503, detail="Reporte exploratorio no disponible"
+        ) from exc
+
+
+@router.post("/api/v1/simulations/exploratory/{level}/run", tags=["simulations"])
+def run_exploratory_sumo(level: str, container: Container) -> dict[str, Any]:
+    try:
+        return container.exploratory_sumo.run(level)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except ExploratorySumoBusyError as exc:
+        raise HTTPException(status_code=429, detail=str(exc)) from exc
+    except (ExploratorySumoError, OSError, ET.ParseError) as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/health", tags=["system"])
@@ -228,6 +273,11 @@ def predict_traffic(payload: PredictionCreate, container: Container) -> Any:
     tags=["scenarios"],
 )
 def create_scenario(payload: ScenarioCreate, container: Container) -> Any:
+    if container.settings.environment == "staging":
+        raise HTTPException(
+            status_code=410,
+            detail="Los escenarios técnicos fueron retirados. Use la simulación exploratoria SUMO.",
+        )
     return container.create_scenario.execute(SimulationScenario(**payload.model_dump()))
 
 
@@ -252,6 +302,14 @@ def list_scenarios(container: Container) -> list[Any]:
     tags=["simulations"],
 )
 def run_scenario(scenario_id: UUID, container: Container) -> list[Any]:
+    if container.run_scenario is None:
+        raise HTTPException(
+            status_code=410,
+            detail=(
+                "La ejecución técnica con valores de prueba fue retirada. "
+                "Use /api/v1/simulations/exploratory/{level}/run."
+            ),
+        )
     try:
         return container.run_scenario.execute(scenario_id)
     except EntityNotFoundError as exc:

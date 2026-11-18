@@ -78,9 +78,15 @@ def write_config(scenario: str, route_file: Path) -> Path:
     config = SUMO_DIR / "configuration" / f"osm-{scenario}.sumocfg"
     root = ET.Element("configuration")
     inputs = ET.SubElement(root, "input")
-    ET.SubElement(inputs, "net-file", value=os.path.relpath(NET_FILE, config.parent))
     ET.SubElement(
-        inputs, "route-files", value=os.path.relpath(route_file, config.parent)
+        inputs,
+        "net-file",
+        value=os.path.relpath(NET_FILE, config.parent).replace("\\", "/"),
+    )
+    ET.SubElement(
+        inputs,
+        "route-files",
+        value=os.path.relpath(route_file, config.parent).replace("\\", "/"),
     )
     times = ET.SubElement(root, "time")
     ET.SubElement(times, "begin", value="0")

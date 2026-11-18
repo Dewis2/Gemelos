@@ -14,9 +14,8 @@ export const DEMAND_LEVEL_LABELS: Record<DemandLevel, string> = {
  *
  * El puerto `TrafficSimulatorPort.set_traffic_demand` recibe un objeto
  * (`dict[str, Any]`), por lo que `demand` no puede enviarse como número.
- * Ninguna clave es interpretada todavía: `FakeTrafficSimulator` descarta el
- * argumento y `SumoTrafficSimulator` mantiene el mapeo como tarea pendiente.
- * Se envía únicamente el nivel elegido por el usuario, sin magnitudes inventadas.
+ * Contrato heredado del endpoint técnico en desarrollo. En staging se usa
+ * el endpoint exploratorio SUMO con tres configuraciones versionadas.
  */
 export interface ScenarioDemand {
   level: DemandLevel;
@@ -27,15 +26,15 @@ export interface ScenarioConfiguration {
   steps: number;
 }
 
-/** `int(configuration["steps"])`. En el adaptador SUMO equivale a pasos de simulación. */
+/** Pasos del endpoint técnico heredado; no se usan en la ejecución OSM/SUMO. */
 export const DEFAULT_SIMULATION_STEPS = 300;
 export const MIN_SIMULATION_STEPS = 1;
 
 export const DEMAND_NOT_INTERPRETED_NOTICE =
-  "El simulador conectado todavía no interpreta la demanda: FakeTrafficSimulator descarta el argumento y el mapeo a rutas de SUMO sigue pendiente. El nivel se registra como configuración trazable, no altera el resultado.";
+  "El endpoint técnico heredado usa un adaptador de prueba. La ejecución exploratoria OSM/SUMO usa rutas versionadas.";
 
 export const STEPS_NOTE =
-  "steps es el número de pasos de simulación (1 segundo por paso con la longitud de paso por defecto de SUMO). El simulador actual valida el valor pero no lo aplica a ningún indicador.";
+  "Este valor corresponde al endpoint técnico heredado; los escenarios OSM/SUMO usan 1800 segundos fijos.";
 
 export interface ScenarioPreset {
   id: string;

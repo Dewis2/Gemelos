@@ -196,3 +196,21 @@ export interface ScenarioExecution {
   scenario: SimulationScenario;
   results: SimulationResult[];
 }
+
+export interface ExploratoryRun {
+  study_type: "exploratory_uncalibrated";
+  level: "baja" | "normal" | "alta";
+  source: string;
+  network_sha256: string;
+  route_sha256: string;
+  seed: number;
+  synthetic_departure_interval_seconds: number;
+  routes_generated: number;
+  vehicles_inserted: number;
+  vehicles_arrived: number;
+  vehicles_remaining: number;
+  mean_trip_duration_seconds: number | null;
+  mean_waiting_seconds: number | null;
+  mean_time_loss_seconds: number | null;
+  mean_trip_speed_kmh: number | null;
+}

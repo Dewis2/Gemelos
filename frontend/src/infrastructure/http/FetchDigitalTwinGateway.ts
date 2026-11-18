@@ -3,6 +3,7 @@ import type {
   DemoMlResult,
   DemoState,
   DigitalTwinState,
+  ExploratoryRun,
   HealthStatus,
   PredictionCommand,
   ReplayCommand,
@@ -16,6 +17,7 @@ import type {
   TrafficQueryResult,
 } from "../../domain/models";
 import type { DigitalTwinGateway } from "../../domain/ports/DigitalTwinGateway";
+import { clearEditorToken, editorToken, setEditorToken } from "../auth/session";
 
 export class HttpRequestError extends Error {
   constructor(message: string, readonly status: number) {
@@ -27,8 +29,14 @@ export class FetchDigitalTwinGateway implements DigitalTwinGateway {
   constructor(private readonly baseUrl: string) {}
 
   private async request<T>(path: string, init?: RequestInit): Promise<T> {
-    const response = await fetch(`${this.baseUrl}${path}`, init);
+    const headers = new Headers(init?.headers);
+    if (init?.method && init.method !== "GET") {
+      const token = editorToken();
+      if (token) headers.set("Authorization", `Bearer ${token}`);
+    }
+    const response = await fetch(`${this.baseUrl}${path}`, { ...init, headers });
     if (!response.ok) {
+      if (response.status === 401 && path !== "/api/v1/auth/login") clearEditorToken();
       const raw = await response.text();
       let message = raw || `La API respondió con estado ${response.status}.`;
       try {
@@ -108,4 +116,17 @@ export class FetchDigitalTwinGateway implements DigitalTwinGateway {
   runScenario(scenarioId: string) {
     return this.post<SimulationResult[]>(`/api/v1/scenarios/${encodeURIComponent(scenarioId)}/run`);
   }
+
+  runExploratorySumo(level: ExploratoryRun["level"]) {
+    return this.post<ExploratoryRun>(`/api/v1/simulations/exploratory/${level}/run`);
+  }
+
+  async loginEditor(username: string, password: string): Promise<string> {
+    const response = await this.post<{ access_token: string }>("/api/v1/auth/login", { username, password });
+    setEditorToken(response.access_token);
+    return response.access_token;
+  }
+
+  logoutEditor() { clearEditorToken(); }
+  hasEditorSession() { return Boolean(editorToken()); }
 }

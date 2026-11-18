@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useState, type FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import type { DashboardOverview } from "../../domain/models";
 import { useApplication } from "../ApplicationContext";
 
@@ -22,5 +22,41 @@ export function StatusPage() {
 }
 
 export function LoginPage() {
-  return <div className="login"><p className="eyebrow">Alcance del PMV</p><h2>Acceso no implementado</h2><p>La autenticación no forma parte de las historias priorizadas. No existen usuarios ni credenciales reales.</p><Link to="/">Volver al panel</Link></div>;
+  const application = useApplication();
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("editor");
+  const [password, setPassword] = useState("");
+  const [active, setActive] = useState(application.hasEditorSession());
+  const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    setPending(true);
+    setError(null);
+    try {
+      await application.loginEditor(username, password);
+      setActive(true);
+      setPassword("");
+      navigate("/escenarios");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "No se pudo iniciar sesión.");
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return <div className="login">
+    <p className="eyebrow">Edición del prototipo</p>
+    <h2>Acceso de editor</h2>
+    <p>Las consultas son públicas. Para ejecutar SUMO o modificar datos, inicia sesión con la cuenta de editor.</p>
+    {active ? <button type="button" onClick={() => { application.logoutEditor(); setActive(false); }}>Cerrar sesión</button> :
+      <form onSubmit={(event) => void submit(event)}>
+        <label>Usuario<input autoComplete="username" value={username} onChange={(event) => setUsername(event.target.value)} required /></label>
+        <label>Contraseña<input type="password" autoComplete="current-password" value={password} onChange={(event) => setPassword(event.target.value)} required /></label>
+        <button type="submit" disabled={pending}>{pending ? "Ingresando…" : "Ingresar"}</button>
+      </form>}
+    {error && <div className="error-box" role="alert">{error}</div>}
+    <Link to="/">Volver al panel</Link>
+  </div>;
 }

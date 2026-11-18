@@ -9,9 +9,15 @@ COPY backend/pyproject.toml /app/backend/pyproject.toml
 COPY backend/src /app/backend/src
 COPY backend/migrations /app/backend/migrations
 COPY backend/alembic.ini /app/backend/alembic.ini
-RUN python -m pip install --no-cache-dir /app/backend
+RUN python -m pip install --no-cache-dir /app/backend eclipse-sumo==1.28.0
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libx11-6 libxext6 libxrender1 libgl1 libatomic1 libexpat1 \
+    && rm -rf /var/lib/apt/lists/*
+RUN python -c "import sumo; print(sumo.SUMO_HOME)"
 COPY ml /app/ml
 COPY data /app/data
+COPY simulation/sumo /app/simulation/sumo
+COPY frontend/src/data/osm-exploratory-report.json /app/frontend/src/data/osm-exploratory-report.json
 RUN python -m ml.scripts.fetch_mitv && python -m ml.scripts.train_and_publish
 WORKDIR /app/backend
 EXPOSE 10000

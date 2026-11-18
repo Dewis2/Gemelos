@@ -97,11 +97,11 @@ export function ArchitecturePage() {
           : `Sin publicación registrada en esta sesión (estado: ${mqttStatus}).`,
       },
       {
-        name: "SUMO / TraCI",
+        name: "SUMO CLI",
         role: "Simulación de escenarios",
         status: "parcial",
         evidence:
-          "Tres ejecuciones OSM/SUMO exploratorias reproducibles; la API aún usa un adaptador de prueba y la red no está calibrada.",
+          "Tres escenarios OSM/SUMO exploratorios reproducibles, ejecutables por la API; la red no está calibrada.",
       },
     ];
   }, [overview, ml]);
@@ -157,9 +157,9 @@ export function ArchitecturePage() {
       </section>
 
       <section className="panel">
-        <h3>Piezas aún no operativas</h3>
+        <h3>Límites del prototipo</h3>
         <ul className="warning-list">
-          <li>Los endpoints de escenarios aún usan un adaptador de prueba. El estudio OSM/SUMO de la página Escenarios se ejecuta por separado y no está calibrado.</li>
+          <li>La ejecución exploratoria OSM/SUMO se ofrece desde la API. El antiguo endpoint de resultados por tramo no se utiliza en staging porque la red no está calibrada ni segmentada oficialmente.</li>
           <li>La geometría del corredor sigue en estado {overview?.twin.geometry_status ?? "pending_validation"}; el mapa es esquemático.</li>
           <li>No existen datos locales actuales de la Av. Ferrocarril: los aforos disponibles son históricos de 2013.</li>
           <li>El modelo publicado no ha sido validado con datos locales de Huancayo.</li>

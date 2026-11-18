@@ -22,6 +22,12 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
     ml_model_path: str = "../ml/models/traffic_model.joblib"
     sumo_binary: str = "sumo"
+    sumo_assets_root: str = "../simulation/sumo"
+    sumo_report_path: str = "../frontend/src/data/osm-exploratory-report.json"
+    auth_required: bool = False
+    auth_username: str = "editor"
+    auth_password_hash: str = ""
+    auth_secret: str = ""
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
@@ -39,6 +45,14 @@ class Settings(BaseSettings):
     @model_validator(mode="after")
     def validate_cloud_settings(self) -> "Settings":
         if self.environment == "staging":
+            if (
+                not self.auth_required
+                or not self.auth_password_hash.startswith("scrypt$")
+                or len(self.auth_secret) < 32
+            ):
+                raise ValueError(
+                    "Staging requires editor authentication and server-side secrets."
+                )
             if (
                 self.core_repository != "sqlalchemy"
                 or self.demo_repository != "sqlalchemy"
