@@ -70,10 +70,13 @@ El sondeo repetido después del despliegue está en
 respectivamente, con dos clientes concurrentes. Son valores puntuales, no una
 prueba de capacidad.
 
-La ejecución SUMO autenticada desde Render queda pendiente de comprobación con
-la cuenta de editor. No se almacena la contraseña ni un token en este
-repositorio. La ejecución local y en Linux sí finalizó los tres escenarios,
-como consta arriba.
+El propietario del servicio confirmó manualmente que inició sesión como editor,
+ejecutó la demanda normal desde `/escenarios` en Render y vio «Resultado recién
+calculado por SUMO» con 225/225 viajes. Esta confirmación se recibió por chat;
+no se adjuntó una captura de esa ejecución ni se inspeccionó su respuesta de API
+desde este equipo. No se almacena la contraseña ni un token en este repositorio.
+La ejecución local y en Linux sí finalizó los tres escenarios, como consta
+arriba.
 
 ## Alcance científico
 
