@@ -1,0 +1,16 @@
+{
+  "checked_at_utc": "2026-11-18T20:01:41.335980+00:00",
+  "url": "https://gemelos-staging-api.onrender.com/health",
+  "request_count": 20,
+  "status_counts": {
+    "0": 2,
+    "200": 18
+  },
+  "latency_ms": {
+    "min": 197.43,
+    "median": 249.89,
+    "p95": 30169.64,
+    "max": 30169.64
+  },
+  "scope": "Dos clientes GET /health; no mide PostgreSQL, SUMO ni capacidad máxima."
+}

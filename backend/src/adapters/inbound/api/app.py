@@ -7,6 +7,7 @@ from sqlalchemy.exc import IntegrityError
 
 from adapters.inbound.api.container import ApplicationContainer
 from adapters.inbound.api.routes import router
+from infrastructure.auth import verify_token
 from infrastructure.config import Settings, get_settings
 from infrastructure.logging import configure_logging
 
@@ -32,10 +33,30 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @app.middleware("http")
     async def response_security_headers(request, call_next):
-        response = await call_next(request)
+        response = None
+        if (
+            resolved.auth_required
+            and request.method not in {"GET", "HEAD", "OPTIONS"}
+            and request.url.path != "/api/v1/auth/login"
+        ):
+            authorization = request.headers.get("authorization", "")
+            token = (
+                authorization.removeprefix("Bearer ")
+                if authorization.startswith("Bearer ")
+                else ""
+            )
+            if not verify_token(token, resolved.auth_username, resolved.auth_secret):
+                response = JSONResponse(
+                    status_code=401,
+                    content={"detail": "Inicie sesión como editor."},
+                    headers={"WWW-Authenticate": "Bearer"},
+                )
+        if response is None:
+            response = await call_next(request)
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["Cache-Control"] = "no-store"
+        response.headers["X-Frame-Options"] = "DENY"
         return response
 
     @app.exception_handler(IntegrityError)

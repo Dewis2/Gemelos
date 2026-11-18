@@ -18,6 +18,6 @@ jobs:
       - run: ruff check backend/src backend/tests ml/src ml/tests edge
       - name: PMV2 and PMV3 tools
         run: |
-          black --check backend/migrations/versions/0003_traffic_stored_routines.py ml/experiments/peru_toll_traffic/train.py scripts/backup_postgres.py scripts/export_evidence.py scripts/load_test_local.py scripts/validate_local_2026.py simulation/calibration.py
-          ruff check backend/migrations/versions/0003_traffic_stored_routines.py ml/experiments/peru_toll_traffic/train.py scripts/backup_postgres.py scripts/export_evidence.py scripts/load_test_local.py scripts/validate_local_2026.py simulation/calibration.py
+          black --check backend/migrations/versions/0003_traffic_stored_routines.py ml/experiments/peru_toll_traffic/train.py scripts/backup_postgres.py scripts/export_evidence.py scripts/load_test_local.py scripts/validate_local_2026.py scripts/check_staging.py scripts/hash_editor_password.py simulation/calibration.py simulation/build_osm_exploration.py
+          ruff check backend/migrations/versions/0003_traffic_stored_routines.py ml/experiments/peru_toll_traffic/train.py scripts/backup_postgres.py scripts/export_evidence.py scripts/load_test_local.py scripts/validate_local_2026.py scripts/check_staging.py scripts/hash_editor_password.py simulation/calibration.py simulation/build_osm_exploration.py
 

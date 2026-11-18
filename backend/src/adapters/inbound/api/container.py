@@ -23,6 +23,7 @@ from adapters.outbound.persistence import (
     build_traffic_aggregate_repository,
 )
 from adapters.outbound.sumo import FakeTrafficSimulator
+from adapters.outbound.sumo.exploratory import ExploratorySumoRunner
 from application.ports.outbound import (
     EventPublisherPort,
     PredictionRepository,
@@ -50,6 +51,7 @@ class ApplicationContainer:
     """Explicit composition root; swap adapters here without changing use cases."""
 
     def __init__(self, settings: Settings) -> None:
+        self.settings = settings
         self.engine = None
         self.session_factory = None
         if "sqlalchemy" in {settings.core_repository, settings.demo_repository}:
@@ -79,9 +81,13 @@ class ApplicationContainer:
             self.store.segments.extend(segments)
             traffic = network = prediction = scenario = simulation = self.store
         self.scenario_repository = scenario
+        self.exploratory_sumo = ExploratorySumoRunner(
+            Path(settings.sumo_assets_root),
+            Path(settings.sumo_report_path),
+            settings.sumo_binary,
+        )
 
         publisher = LoggingEventPublisher()
-        simulator = FakeTrafficSimulator()
         model = JoblibTrafficModel(settings.ml_model_path)
 
         self.register_measurement = RegisterTrafficMeasurement(traffic, publisher)
@@ -89,9 +95,11 @@ class ApplicationContainer:
         self.get_twin_state = GetDigitalTwinState(traffic, network)
         self.predict_traffic = PredictTrafficFlow(model, prediction, network)
         self.create_scenario = CreateSimulationScenario(scenario)
-        self.run_scenario = RunSimulationScenario(
-            scenario, simulation, network, simulator
-        )
+        self.run_scenario = None
+        if settings.environment != "staging":
+            self.run_scenario = RunSimulationScenario(
+                scenario, simulation, network, FakeTrafficSimulator()
+            )
         self.get_simulation_results = GetSimulationResults(simulation)
         self.compare_scenarios = CompareSimulationScenarios(simulation)
 

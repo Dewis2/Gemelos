@@ -61,14 +61,17 @@ carriles. No se calcula GEH, porque faltan conteos observados comparables.
 Los tres escenarios terminaron con cero vehículos pendientes. El reporte JSON
 contiene los hashes de la extracción, la red y las rutas, además de los parámetros
 de ejecución. Los comentarios de SUMO con marcas de hora y rutas del equipo se
-eliminan de los XML publicados para que sus hashes sean estables al regenerarlos.
+eliminan de los XML publicados. Para que los hashes coincidan en Windows y Linux,
+los finales de línea XML se normalizan a LF antes de calcular SHA-256.
 
 ## Separación de alcance
 
-El backend desplegado sigue usando `FakeTrafficSimulator` para sus endpoints
-`/api/v1/scenarios`; sus resultados no son las ejecuciones de SUMO de este
-estudio. La página **Escenarios** presenta ambos bloques por separado. La
-geometría oficial del corredor y su calibración permanecen pendientes.
+El backend ejecuta las tres configuraciones versionadas mediante
+`POST /api/v1/simulations/exploratory/{level}/run` y devuelve métricas agregadas de
+la red experimental. Las escrituras requieren acceso de editor en staging. El
+antiguo endpoint `/api/v1/scenarios/{id}/run` devuelve 410 en staging: sus filas
+por tramo eran marcadores de posición y no se deben confundir con el estudio SUMO.
+La geometría oficial del corredor y su calibración permanecen pendientes.
 
 El adaptador TraCI en `backend/src/adapters/outbound/sumo/traci_adapter.py` es
 una integración opcional distinta de este experimento reproducible.

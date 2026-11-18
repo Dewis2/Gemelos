@@ -112,7 +112,7 @@ export function DashboardPage() {
           <strong>{overview.twin.road_segment_count} tramos en el gemelo</strong>
           <SourceTag category="simulated" />
           <small className="kpi-source">
-            La API de escenarios usa un adaptador de prueba; la página incluye además una simulación exploratoria OSM/SUMO con métricas separadas.
+            La página permite ejecutar en el backend tres escenarios exploratorios OSM/SUMO con demanda sintética.
             <Link to="/escenarios"> Ir a Escenarios</Link>
           </small>
         </article>

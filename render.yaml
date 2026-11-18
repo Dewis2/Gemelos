@@ -37,6 +37,18 @@ services:
         value: /app/ml/models/demo_peru/metadata.json
       - key: MQTT_ENABLED
         value: "false"
+      - key: AUTH_REQUIRED
+        value: "true"
+      - key: AUTH_USERNAME
+        value: editor
+      - key: AUTH_SECRET
+        generateValue: true
+      - key: AUTH_PASSWORD_HASH
+        sync: false
+      - key: SUMO_ASSETS_ROOT
+        value: /app/simulation/sumo
+      - key: SUMO_REPORT_PATH
+        value: /app/frontend/src/data/osm-exploratory-report.json
       - key: CORS_ORIGINS
         sync: false
   - type: web

@@ -27,6 +27,7 @@ export function Layout() {
           <nav>{secondaryLinks.map(([to, label]) => <NavLink key={to} to={to}>{label}</NavLink>)}</nav>
         </div>
         <div className="architecture-note"><span>Arquitectura</span><strong>Hexagonal</strong><small>Dominio · Aplicación · Adaptadores</small></div>
+        <nav><NavLink to="/login">Acceso de editor</NavLink></nav>
       </aside>
       <main><Outlet /></main>
     </div>

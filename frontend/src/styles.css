@@ -128,6 +128,9 @@ table { width: 100%; border-collapse: collapse; }
 th, td { padding: 12px; border-bottom: 1px solid #29453b; text-align: left; }
 th { color: #73e5b2; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; }
 .login a { color: #73e5b2; }
+.login form { display: grid; gap: 12px; margin: 20px auto; width: min(100%, 340px); text-align: left; }
+.login form label { display: grid; gap: 6px; }
+.login form input { width: 100%; }
 @media (max-width: 1100px) { .dashboard-cards, .journey-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .form-panel { grid-template-columns: 1fr; } }
 @media (max-width: 800px) { .dashboard-cards, .journey-grid, .dataset-grid, .status-grid, .form-panel form { grid-template-columns: 1fr; } .section-heading { flex-direction: column; } .metric-row { justify-content: flex-start; } }
 

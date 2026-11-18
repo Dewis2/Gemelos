@@ -21,7 +21,7 @@
   "network": {
     "passenger_edges": 1451,
     "ferrocarril_edges": 59,
-    "network_sha256": "43bfd9195be84e1e584021ace253358f8132ebc3e7cb6b09a1c33e7b88afcc35",
+    "network_sha256": "c367b98e049b6820ebf706ce8d7bd09ab5d33b6db0a8321f75e85beb463d3fa0",
     "map_sha256": "b839969592fc9762d5a2264d64005a91cf142f72d3df5d827878b581a5ebe380"
   },
   "time": {
@@ -39,7 +39,7 @@
       "mean_waiting_seconds": 34.27,
       "mean_time_loss_seconds": 62.52,
       "mean_trip_speed_kmh": 36.34,
-      "route_sha256": "cf2865d38f59c4912cd1a745c7e81588fa13e34412ad13c79c500ded1dd71b6b"
+      "route_sha256": "9e15561c6b7acd6f856a6ec6fa27e4fd6fc812e1cbfe47298bf3599e17e1faa9"
     },
     "normal": {
       "synthetic_departure_interval_seconds": 4,
@@ -51,7 +51,7 @@
       "mean_waiting_seconds": 42.89,
       "mean_time_loss_seconds": 74.01,
       "mean_trip_speed_kmh": 34.37,
-      "route_sha256": "7ae30415d0267dc549ed66642746bd256c412ac7802e81fb26a4422d65d95427"
+      "route_sha256": "3e182385a05eee210255676c9eb392e6f3407d92dbf59400b5e689743aa1aaf5"
     },
     "alta": {
       "synthetic_departure_interval_seconds": 2,
@@ -63,12 +63,13 @@
       "mean_waiting_seconds": 46.67,
       "mean_time_loss_seconds": 80.89,
       "mean_trip_speed_kmh": 33.64,
-      "route_sha256": "a8e400006744d7eccb10858484384e9d01daa08559543dee455216c27b159947"
+      "route_sha256": "1a23d3cfc8e7334af058391ee2adbf16fad768cfb61c6a2dd96715faabd14810"
     }
   },
   "limitations": [
     "Viajes generados aleatoriamente; los intervalos no proceden de aforos.",
     "La red OSM es colaborativa y no constituye geometría oficial certificada.",
     "Los resultados no calibran ni predicen el tráfico real de 2026 en Av. Ferrocarril."
-  ]
+  ],
+  "hash_normalization": "xml_line_endings_lf"
 }

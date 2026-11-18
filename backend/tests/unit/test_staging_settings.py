@@ -1,9 +1,17 @@
 """Cloud configuration rules and provider-issued Postgres URLs."""
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from infrastructure.config import Settings
+
+
+def test_default_sumo_assets_are_resolved_from_project_root():
+    settings = Settings(_env_file=None)
+    assert Path(settings.sumo_assets_root).is_dir()
+    assert Path(settings.sumo_report_path).is_file()
 
 
 def test_render_postgres_dsn_uses_installed_psycopg_driver():
@@ -24,6 +32,9 @@ def test_staging_requires_sql_and_https_frontend():
         core_repository="sqlalchemy",
         demo_repository="sqlalchemy",
         cors_origins=["https://gemelos-staging-frontend.onrender.com"],
+        auth_required=True,
+        auth_password_hash="scrypt$16384$8$1$" + "00" * 16 + "$" + "00" * 64,
+        auth_secret="x" * 32,
     )
     assert settings.database_url.startswith("postgresql+psycopg://")
 
@@ -45,6 +56,9 @@ def test_staging_rejects_local_services(changes):
         core_repository="sqlalchemy",
         demo_repository="sqlalchemy",
         cors_origins=["https://gemelos-staging-frontend.onrender.com"],
+        auth_required=True,
+        auth_password_hash="scrypt$16384$8$1$" + "00" * 16 + "$" + "00" * 64,
+        auth_secret="x" * 32,
     )
     arguments.update(changes)
     with pytest.raises(ValidationError):

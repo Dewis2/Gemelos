@@ -34,8 +34,10 @@ SOURCE_URL = (
 
 
 def sha256(path: Path) -> str:
-    with path.open("rb") as stream:
-        return hashlib.file_digest(stream, "sha256").hexdigest()
+    content = path.read_bytes()
+    if path.suffix == ".xml":
+        content = content.replace(b"\r\n", b"\n")
+    return hashlib.sha256(content).hexdigest()
 
 
 def remove_generated_comments(path: Path) -> None:
@@ -78,9 +80,15 @@ def write_config(scenario: str, route_file: Path) -> Path:
     config = SUMO_DIR / "configuration" / f"osm-{scenario}.sumocfg"
     root = ET.Element("configuration")
     inputs = ET.SubElement(root, "input")
-    ET.SubElement(inputs, "net-file", value=os.path.relpath(NET_FILE, config.parent))
     ET.SubElement(
-        inputs, "route-files", value=os.path.relpath(route_file, config.parent)
+        inputs,
+        "net-file",
+        value=os.path.relpath(NET_FILE, config.parent).replace("\\", "/"),
+    )
+    ET.SubElement(
+        inputs,
+        "route-files",
+        value=os.path.relpath(route_file, config.parent).replace("\\", "/"),
     )
     times = ET.SubElement(root, "time")
     ET.SubElement(times, "begin", value="0")
@@ -264,6 +272,7 @@ def build() -> dict[str, Any]:
     ).stdout.splitlines()[0]
     report = {
         "study_type": "exploratory_uncalibrated",
+        "hash_normalization": "xml_line_endings_lf",
         "generated_at_utc": datetime.now(UTC).isoformat(),
         "source": {
             "name": "OpenStreetMap contributors",

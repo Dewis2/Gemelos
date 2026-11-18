@@ -1,6 +1,8 @@
 import { useState } from "react";
 import report from "../../data/osm-exploratory-report.json";
+import type { ExploratoryRun } from "../../domain/models";
 import { ExploratoryOsmMap } from "../../maps/ExploratoryOsmMap";
+import { useApplication } from "../ApplicationContext";
 
 const levels = ["baja", "normal", "alta"] as const;
 type Level = (typeof levels)[number];
@@ -8,8 +10,24 @@ const labels: Record<Level, string> = { baja: "Baja", normal: "Normal", alta: "A
 const number = new Intl.NumberFormat("es-PE", { maximumFractionDigits: 2 });
 
 export function ExploratorySumoPanel() {
+  const application = useApplication();
   const [level, setLevel] = useState<Level>("normal");
-  const selected = report.scenarios[level];
+  const [liveRun, setLiveRun] = useState<ExploratoryRun | null>(null);
+  const [running, setRunning] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const selected = liveRun?.level === level ? liveRun : report.scenarios[level];
+
+  const execute = async () => {
+    setRunning(true);
+    setError(null);
+    try {
+      setLiveRun(await application.runExploratorySumo(level));
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "No se pudo ejecutar SUMO.");
+    } finally {
+      setRunning(false);
+    }
+  };
 
   return (
     <section className="panel osm-simulation-panel">
@@ -26,6 +44,13 @@ export function ExploratorySumoPanel() {
           </select>
         </label>
       </div>
+      <div className="toolbar">
+        <button type="button" className="primary" disabled={running} onClick={() => void execute()}>
+          {running ? "Ejecutando SUMO…" : "Ejecutar este escenario en el backend"}
+        </button>
+        <span className="source-note">{liveRun?.level === level ? "Resultado recién calculado por SUMO" : "Resultado reproducible publicado"}</span>
+      </div>
+      {error && <div className="error-box" role="alert">{error} <a href="/login">Acceso de editor</a></div>}
 
       <div className="osm-simulation-layout">
         <div>
@@ -61,6 +86,7 @@ export function ExploratorySumoPanel() {
         </table>
       </div>
       <p className="source-note">SUMO {report.software.sumo.replace("Eclipse SUMO sumo ", "")} · {report.network.passenger_edges} enlaces aptos para automóviles · {report.network.ferrocarril_edges} enlaces identificados como Av. Ferrocarril. La red y las rutas se pueden regenerar desde la extracción OSM incluida en el repositorio.</p>
+      {liveRun && <p className="source-note">Última ejecución: demanda {labels[liveRun.level].toLowerCase()} · semilla {liveRun.seed} · red SHA-256 {liveRun.network_sha256.slice(0, 12)}… · ruta SHA-256 {liveRun.route_sha256.slice(0, 12)}…</p>}
     </section>
   );
 }

@@ -117,6 +117,10 @@ export class DigitalTwinApplication {
   }
 
   listScenarios() { return this.gateway.listScenarios(); }
+  runExploratorySumo(level: "baja" | "normal" | "alta") { return this.gateway.runExploratorySumo(level); }
+  loginEditor(username: string, password: string) { return this.gateway.loginEditor(username, password); }
+  logoutEditor() { this.gateway.logoutEditor(); }
+  hasEditorSession() { return this.gateway.hasEditorSession(); }
   getScenarioResults(scenarioId: string) { return this.gateway.getScenarioResults(scenarioId); }
 
   async createAndRunScenario(command: ScenarioCommand): Promise<ScenarioExecution> {

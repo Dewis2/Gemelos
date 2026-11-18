@@ -335,12 +335,18 @@ UUID, `TIMESTAMPTZ`, claves foráneas e índices iniciales. No hay secretos de p
 - `POST /api/v1/predictions/traffic-flow`
 - `POST /api/v1/scenarios`
 - `POST /api/v1/scenarios/{scenario_id}/run`
+- `GET /api/v1/simulations/exploratory`
+- `POST /api/v1/simulations/exploratory/{baja|normal|alta}/run`
+- `POST /api/v1/auth/login`
 - `GET /api/v1/scenarios/{scenario_id}/results`
 - `GET /api/v1/scenarios/compare?scenario_ids=...&scenario_ids=...`
 
 Los schemas Pydantic son independientes del dominio y nunca se retornan modelos ORM.
-CORS es configurable. JWT está previsto para una fase posterior; hoy no existen
-usuarios, login real ni credenciales.
+CORS es configurable. En staging, las operaciones de escritura requieren un token
+de editor de ocho horas; el hash de contraseña y la clave de firma son variables
+del servidor, no del frontend. Existe una sola cuenta de editor del prototipo,
+sin gestión de usuarios ni recuperación de contraseña. El login se realiza desde
+`/login`. Consulte [la preparación de staging](docs/pmv2-pmv3/staging-sumo-security.md).
 
 ## MQTT y Edge
 
@@ -428,8 +434,11 @@ avanzar pasos y consultar vehículos, velocidad y cola. La ausencia de SUMO/TraC
 de `.sumocfg` produce un error controlado. `FakeTrafficSimulator` soporta tests.
 
 El repositorio incluye una extracción OSM, red SUMO y tres ejecuciones sintéticas
-reproducibles, visibles en **Escenarios**. El backend y el contenedor inicial siguen
-usando `FakeTrafficSimulator`; este estudio separado no calibra el corredor.
+reproducibles, visibles en **Escenarios**. El backend ejecuta estas configuraciones
+versionadas mediante SUMO CLI y devuelve métricas agregadas de viajes. El endpoint
+antiguo de simulación por tramo devuelve 410 en staging, pues esa red experimental
+no permite atribuir las métricas a los tramos de referencia. `FakeTrafficSimulator`
+permanece para pruebas y desarrollo. La simulación no calibra el corredor.
 Consulte [simulation/README.md](simulation/README.md). La geometría OSM derivada
 está sujeta a ODbL 1.0 y atribución a OpenStreetMap, independientemente de la
 licencia MIT del código.
@@ -492,15 +501,15 @@ dashboard final, reportes y documentación de evidencia.
 - Datos locales actuales: pendientes. Los nueve aforos disponibles son de 2013.
 - Modelo entrenado: disponible como PoC técnica sobre MITV-UCI (Minnesota). **No está
   validado con datos locales de Huancayo** y no distingue segmentos del corredor.
-- Simulación: los endpoints de escenarios siguen usando el adaptador de prueba y
-  muestran sus ceros como marcadores de posición. Por separado, la página **Escenarios**
-  presenta tres ejecuciones OSM/SUMO exploratorias con viajes sintéticos y métricas
-  reales del simulador, sin atribuirlas al tráfico observado.
-- SUMO/TraCI: el adaptador TraCI no se activa en el contenedor. La ejecución OSM/SUMO
-  reproducible se realiza con `simulation/build_osm_exploration.py`.
+- Simulación: la API ejecuta tres escenarios OSM/SUMO de demanda sintética y devuelve
+  métricas de toda la red. No son resultados observados ni estimaciones por tramo.
+  Los parámetros de incidentes y semáforos no se aceptan en esas ejecuciones.
+- SUMO/TraCI: el adaptador TraCI sigue siendo opcional. La API usa SUMO CLI con
+  rutas controladas; `simulation/build_osm_exploration.py` regenera sus activos.
 - Persistencia configurable con CORE_REPOSITORY y DEMO_REPOSITORY; plantillas PostgreSQL.
 - MQTT es opcional; el cliente se cierra al terminar FastAPI. No se validó el broker en la instalación nativa.
-- Calibración con aforos locales, seguridad y rendimiento del despliegue: por medir.
+- Calibración con aforos locales: pendiente. El ensayo acotado de seguridad y
+  rendimiento de staging se documenta por separado y no representa capacidad de producción.
 - El mapa muestra un aviso y no dibuja geometría ficticia.
 
 ## Equipo

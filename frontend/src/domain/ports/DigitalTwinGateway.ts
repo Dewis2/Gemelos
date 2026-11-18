@@ -3,6 +3,7 @@ import type {
   DemoMlResult,
   DemoState,
   DigitalTwinState,
+  ExploratoryRun,
   HealthStatus,
   PredictionCommand,
   ReplayCommand,
@@ -36,4 +37,8 @@ export interface DigitalTwinGateway {
   getScenarioResults(scenarioId: string): Promise<SimulationResult[]>;
   createScenario(command: ScenarioCommand): Promise<SimulationScenario>;
   runScenario(scenarioId: string): Promise<SimulationResult[]>;
+  runExploratorySumo(level: ExploratoryRun["level"]): Promise<ExploratoryRun>;
+  loginEditor(username: string, password: string): Promise<string>;
+  logoutEditor(): void;
+  hasEditorSession(): boolean;
 }
