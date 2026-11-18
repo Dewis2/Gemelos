@@ -42,9 +42,38 @@ la autenticación en Render.
 
 Estos son sondeos acotados de disponibilidad y latencia; no constituyen una
 prueba de capacidad máxima ni sustituyen una evaluación de seguridad de
-producción. Tras configurar las variables de editor y publicar la revisión,
-se deben repetir las comprobaciones según
-[`docs/pmv2-pmv3/staging-sumo-security.md`](../../pmv2-pmv3/staging-sumo-security.md).
+producción.
+
+## Comprobación publicada en `main`
+
+El 18 de noviembre de 2026, Render marcó **Live** el despliegue automático del
+commit `b8b70a4` del PR #5. La captura proporcionada por el propietario del
+servicio está en [`render-api-live-main.png`](render-api-live-main.png).
+Las tres comprobaciones de GitHub Actions del commit de merge concluyeron en
+`success`: calidad, pruebas de backend y preparación de staging.
+
+| Comprobación externa | Resultado |
+| --- | --- |
+| `GET /health` | HTTP 200, `status: ok` |
+| `GET /api/v1/simulations/exploratory` | HTTP 200; `study_type: exploratory_uncalibrated`; JSON idéntico al reporte versionado |
+| Escenario normal publicado | 225 viajes finalizados de 225; duración media 182,52 s; espera media 42,89 s; velocidad media 34,37 km/h |
+| `POST /api/v1/simulations/exploratory/normal/run` sin token | HTTP 401, mensaje «Inicie sesión como editor.» |
+| Preflight CORS desde el frontend para ese `POST` | HTTP 200; autoriza `authorization,content-type` y el origen exacto del frontend |
+| `GET /api/v1/digital-twin/state` | HTTP 200; estado `prototype` y geometría `pending_validation` |
+| Frontend `/login` | Abre el formulario «Acceso de editor» |
+| Frontend `/escenarios` | Muestra los tres niveles de demanda, el botón de ejecución y las métricas publicadas |
+
+El sondeo repetido después del despliegue está en
+[`staging-health-and-db-after-deploy.json`](staging-health-and-db-after-deploy.json):
+10/10 respuestas HTTP 200 en `/health` y 10/10 en
+`/api/v1/digital-twin/state`. Las medianas fueron 234,98 ms y 264,79 ms,
+respectivamente, con dos clientes concurrentes. Son valores puntuales, no una
+prueba de capacidad.
+
+La ejecución SUMO autenticada desde Render queda pendiente de comprobación con
+la cuenta de editor. No se almacena la contraseña ni un token en este
+repositorio. La ejecución local y en Linux sí finalizó los tres escenarios,
+como consta arriba.
 
 ## Alcance científico
 
