@@ -70,13 +70,16 @@ El sondeo repetido después del despliegue está en
 respectivamente, con dos clientes concurrentes. Son valores puntuales, no una
 prueba de capacidad.
 
-El propietario del servicio confirmó manualmente que inició sesión como editor,
-ejecutó la demanda normal desde `/escenarios` en Render y vio «Resultado recién
-calculado por SUMO» con 225/225 viajes. Esta confirmación se recibió por chat;
-no se adjuntó una captura de esa ejecución ni se inspeccionó su respuesta de API
-desde este equipo. No se almacena la contraseña ni un token en este repositorio.
-La ejecución local y en Linux sí finalizó los tres escenarios, como consta
-arriba.
+El propietario del servicio confirmó manualmente que inició sesión como editor
+y ejecutó la demanda normal desde `/escenarios` en Render. Las capturas
+[`render-sumo-normal-live-overview.png`](render-sumo-normal-live-overview.png) y
+[`render-sumo-normal-live-results.png`](render-sumo-normal-live-results.png)
+muestran «Resultado recién calculado por SUMO», 225/225 viajes finalizados,
+182,52 s de duración media, 42,89 s de espera media y 34,37 km/h de velocidad
+media. La respuesta autenticada de la API no se inspeccionó desde este equipo;
+la evidencia corresponde a la interfaz del navegador del propietario. No se
+almacena la contraseña ni un token en este repositorio. La ejecución local y en
+Linux también finalizó los tres escenarios, como consta arriba.
 
 ## Alcance científico
 
