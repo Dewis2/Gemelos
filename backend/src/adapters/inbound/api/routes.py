@@ -53,7 +53,7 @@ def editor_login(payload: EditorLogin, container: Container) -> dict[str, str | 
 @router.get("/api/v1/simulations/exploratory", tags=["simulations"])
 def exploratory_report(container: Container) -> dict[str, Any]:
     try:
-        return container.exploratory_sumo.report()
+        return container.get_exploratory_report.execute()
     except (OSError, ValueError) as exc:
         raise HTTPException(
             status_code=503, detail="Reporte exploratorio no disponible"
@@ -63,7 +63,7 @@ def exploratory_report(container: Container) -> dict[str, Any]:
 @router.post("/api/v1/simulations/exploratory/{level}/run", tags=["simulations"])
 def run_exploratory_sumo(level: str, container: Container) -> dict[str, Any]:
     try:
-        return container.exploratory_sumo.run(level)
+        return container.run_exploratory_simulation.execute(level)
     except ValueError as exc:
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     except ExploratorySumoBusyError as exc:

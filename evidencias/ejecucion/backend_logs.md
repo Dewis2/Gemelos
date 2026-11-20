@@ -1,0 +1,3 @@
+# Ejecución del backend
+
+El 20/11/2026 `python -m pytest backend/tests -q` terminó con **83 aprobadas y 12 omitidas**. Las 12 omitidas requieren PostgreSQL opcional en esta máquina; no se contabilizan como aprobadas. MyPy informó `Success: no issues found in 81 source files`. La evidencia de staging del 18/11 está en `docs/evidencias/2026-11-18/README.md`: GET `/health` HTTP 200 y ejecución autenticada mostrada por el usuario con 225/225 viajes. Un primer GET `/health` en esta revisión agotó 30 s tras inactividad de Render; el reintento respondió HTTP 200. No se infiere disponibilidad continua.

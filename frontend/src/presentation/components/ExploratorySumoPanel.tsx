@@ -48,7 +48,7 @@ export function ExploratorySumoPanel() {
         <button type="button" className="primary" disabled={running} onClick={() => void execute()}>
           {running ? "Ejecutando SUMO…" : "Ejecutar este escenario en el backend"}
         </button>
-        <span className="source-note">{liveRun?.level === level ? "Resultado recién calculado por SUMO" : "Resultado reproducible publicado"}</span>
+        <span className="source-note" role="status" aria-live="polite">{liveRun?.level === level ? "Resultado recién calculado por SUMO" : "Resultado reproducible publicado"}</span>
       </div>
       {error && <div className="error-box" role="alert">{error} <a href="/login">Acceso de editor</a></div>}
 

@@ -271,6 +271,7 @@ th { color: #73e5b2; font-size: .75rem; text-transform: uppercase; letter-spacin
 
 .osm-simulation-panel { display: grid; gap: 18px; }
 .osm-simulation-panel .section-heading { align-items: end; }
+.osm-simulation-panel .toolbar { align-items: center; flex-wrap: wrap; gap: 12px; }
 .osm-scenario-select { display: grid; gap: 8px; min-width: 180px; color: #a8bbb4; font-size: .8rem; }
 .osm-scenario-select select { width: 100%; color: #e8f0ed; background: #0a1c15; border: 1px solid #355f4f; border-radius: 8px; padding: 10px; }
 .osm-simulation-layout { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(240px, .6fr); gap: 18px; }
