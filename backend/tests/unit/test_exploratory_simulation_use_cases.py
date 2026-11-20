@@ -21,7 +21,8 @@ class FakeExploratorySimulation:
 def test_exploratory_use_cases_depend_only_on_the_output_port() -> None:
     simulation = FakeExploratorySimulation()
 
-    assert GetExploratoryReport(simulation).execute()["study_type"] == ("exploratory_uncalibrated")
+    report = GetExploratoryReport(simulation).execute()
+    assert report["study_type"] == "exploratory_uncalibrated"
     assert RunExploratorySimulation(simulation).execute("normal") == {
         "level": "normal",
         "vehicles_arrived": 225,
