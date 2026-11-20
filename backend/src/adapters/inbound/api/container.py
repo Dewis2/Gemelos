@@ -37,10 +37,12 @@ from application.use_cases import (
     CompareSimulationScenarios,
     CreateSimulationScenario,
     GetDigitalTwinState,
+    GetExploratoryReport,
     GetRoadNetwork,
     GetSimulationResults,
     PredictTrafficFlow,
     RegisterTrafficMeasurement,
+    RunExploratorySimulation,
     RunSimulationScenario,
 )
 from infrastructure.config import Settings
@@ -81,11 +83,13 @@ class ApplicationContainer:
             self.store.segments.extend(segments)
             traffic = network = prediction = scenario = simulation = self.store
         self.scenario_repository = scenario
-        self.exploratory_sumo = ExploratorySumoRunner(
+        exploratory_sumo = ExploratorySumoRunner(
             Path(settings.sumo_assets_root),
             Path(settings.sumo_report_path),
             settings.sumo_binary,
         )
+        self.get_exploratory_report = GetExploratoryReport(exploratory_sumo)
+        self.run_exploratory_simulation = RunExploratorySimulation(exploratory_sumo)
 
         publisher = LoggingEventPublisher()
         model = JoblibTrafficModel(settings.ml_model_path)

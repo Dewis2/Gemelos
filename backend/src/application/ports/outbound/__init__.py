@@ -1,5 +1,6 @@
 from application.ports.outbound.ports import (
     EventPublisherPort,
+    ExploratorySimulationPort,
     MachineLearningPort,
     PredictionRepository,
     RoadNetworkRepository,
@@ -15,6 +16,7 @@ from application.ports.outbound.traffic_dataset_port import (
 
 __all__ = [
     "EventPublisherPort",
+    "ExploratorySimulationPort",
     "MachineLearningPort",
     "PredictionRepository",
     "RoadNetworkRepository",

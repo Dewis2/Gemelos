@@ -492,8 +492,9 @@ y dashboard conectado.
 
 ### PMV3 — Gemelo evaluado
 
-Validación con datos locales actuales, seguridad, pruebas de carga, calibración,
-dashboard final, reportes y documentación de evidencia.
+Incluye escenarios exploratorios OSM/SUMO, pruebas de software, un endpoint de
+ejecución autenticada y documentación de evidencia. La calibración con datos
+locales actuales sigue pendiente.
 
 ## Limitaciones actuales
 
@@ -518,19 +519,17 @@ dashboard final, reportes y documentación de evidencia.
 - Escobar Cardenas Carlos Leonardo
 - Chicmana Vincula Fabricio Renzo
 - Ochoa Segovia Brayan José
+- Morris Córdova Marcelo Alen
 
 ## Licencia
 
 MIT. Consulte [LICENSE](LICENSE). Las fuentes de datos mantienen sus propias licencias
 y condiciones de uso.
 
-## Preparación para GitHub
+## Evaluación académica y entregables
 
-```bash
-git init
-git add .
-git commit -m "feat: initial digital twin hexagonal architecture"
-```
-
-No se realiza `push` automáticamente. Antes de publicar, revise `.env`, licencias de
-datos, resultados de CI y cualquier archivo local no intencional.
+La [carpeta de semana 14](docs/semana14/README.md) reúne la evaluación de siete
+atributos ICACIT, la solicitud CHG-001-2026, el artículo científico en inglés y
+el póster. La [ingeniería inversa](docs/ingenieria_inversa.md) y el
+[dictamen FURPS+/OWASP](docs/07_auditoria_final.md) detallan las pruebas y brechas
+verificadas al 20 de noviembre de 2026.

@@ -2,6 +2,10 @@ from application.use_cases.digital_twin import (
     GetDigitalTwinState,
     UpdateDigitalTwinState,
 )
+from application.use_cases.exploratory_simulation import (
+    GetExploratoryReport,
+    RunExploratorySimulation,
+)
 from application.use_cases.network import GetRoadNetwork
 from application.use_cases.predictions import PredictTrafficFlow
 from application.use_cases.scenarios import (
@@ -16,10 +20,12 @@ __all__ = [
     "CompareSimulationScenarios",
     "CreateSimulationScenario",
     "GetDigitalTwinState",
+    "GetExploratoryReport",
     "GetRoadNetwork",
     "GetSimulationResults",
     "PredictTrafficFlow",
     "RegisterTrafficMeasurement",
     "RunSimulationScenario",
+    "RunExploratorySimulation",
     "UpdateDigitalTwinState",
 ]
