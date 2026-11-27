@@ -191,6 +191,13 @@ def peru_ml_experiment(container: Container) -> dict[str, Any]:
     return container.demo_ml_metadata
 
 
+@router.get("/api/v1/demo/peru/ml/mtc", tags=["demo-peru"])
+def peru_mtc_ml_experiment(container: Container) -> dict[str, object]:
+    if container.mtc_ml_metadata is None:
+        raise HTTPException(status_code=404, detail="Experimento MTC no disponible")
+    return container.mtc_ml_metadata
+
+
 @router.post("/api/v1/demo/peru/replay/start", tags=["demo-peru"])
 def start_peru_replay(
     payload: ReplayStartRequest, container: Container

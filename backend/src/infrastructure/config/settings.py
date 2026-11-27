@@ -19,6 +19,13 @@ class Settings(BaseSettings):
     core_repository: Literal["memory", "sqlalchemy"] = "memory"
     demo_repository: Literal["memory", "sqlalchemy"] = "memory"
     demo_ml_metadata_path: str = "ml/models/demo_peru/metadata.json"
+    mtc_ml_metadata_path: str = str(
+        Path(__file__).resolve().parents[4]
+        / "ml"
+        / "models"
+        / "demo_peru"
+        / "metadata_mtc_toll_demo.json"
+    )
     cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:5173"]
     log_level: str = "INFO"
     ml_model_path: str = "../ml/models/traffic_model.joblib"

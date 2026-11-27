@@ -32,7 +32,7 @@ function CategoryBars({ values }: { values: Record<string, number> }) {
 export function DemoPeruPage() {
   const application = useApplication();
   const [datasets, setDatasets] = useState<DatasetMetadata[]>([]);
-  const [datasetId, setDatasetId] = useState("mtc_peru_toll_flow");
+  const [datasetId, setDatasetId] = useState("huancayo_historical_counts_2013");
   const [locations, setLocations] = useState<TrafficLocation[]>([]);
   const [locationId, setLocationId] = useState("");
   const [region, setRegion] = useState("");
@@ -48,7 +48,7 @@ export function DemoPeruPage() {
   const selectedDataset = datasets.find((item) => item.dataset_id === datasetId);
 
   useEffect(() => {
-    Promise.all([application.listDatasets(), application.listLocations(), application.getReplayState(), application.getMlExperiment().catch(() => null)])
+    Promise.all([application.listDatasets(), application.listLocations(), application.getReplayState(), application.getMtcMlExperiment().catch(() => null)])
       .then(([datasetRows, locationRows, demoState, mlResult]) => { setDatasets(datasetRows); setLocations(locationRows); setState(demoState); setMl(mlResult); })
       .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : "No se pudo conectar con el API"));
   }, [application]);
@@ -80,7 +80,7 @@ export function DemoPeruPage() {
   }, [application]);
 
   useEffect(() => {
-    setLocationId(""); setStartPeriod(""); setEndPeriod("");
+    setLocationId(""); setRegion(""); setStartPeriod(""); setEndPeriod("");
   }, [datasetId]);
 
   const visibleLocations = useMemo(() => region ? locations.filter((item) => item.region?.toLocaleUpperCase("es-PE") === region) : locations, [locations, region]);

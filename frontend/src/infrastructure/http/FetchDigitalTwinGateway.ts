@@ -80,6 +80,7 @@ export class FetchDigitalTwinGateway implements DigitalTwinGateway {
   }
 
   getMlExperiment() { return this.request<DemoMlResult>("/api/v1/demo/peru/ml"); }
+  getMtcMlExperiment() { return this.request<DemoMlResult>("/api/v1/demo/peru/ml/mtc"); }
   getReplayState() { return this.request<DemoState>("/api/v1/demo/peru/state"); }
   startReplay(command: ReplayCommand) {
     return this.post<DemoState>("/api/v1/demo/peru/replay/start", {

@@ -26,6 +26,7 @@ export interface DigitalTwinGateway {
   listLocations(region?: string): Promise<TrafficLocation[]>;
   queryTraffic(filters: TrafficFilters): Promise<TrafficQueryResult>;
   getMlExperiment(): Promise<DemoMlResult>;
+  getMtcMlExperiment(): Promise<DemoMlResult>;
   getReplayState(): Promise<DemoState>;
   startReplay(command: ReplayCommand): Promise<DemoState>;
   pauseReplay(): Promise<DemoState>;
