@@ -49,6 +49,14 @@ from infrastructure.config import Settings
 from infrastructure.corridor_reference import build_corridor
 
 
+def _read_ml_metadata(path: str) -> dict[str, object] | None:
+    try:
+        metadata: dict[str, object] = json.loads(Path(path).read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return None
+    return metadata
+
+
 class ApplicationContainer:
     """Explicit composition root; swap adapters here without changing use cases."""
 
@@ -164,12 +172,8 @@ class ApplicationContainer:
             demo_publisher,
             mqtt_enabled=mqtt_active,
         )
-        metadata_path = Path(settings.demo_ml_metadata_path)
-        self.demo_ml_metadata: dict[str, object] | None = None
-        if metadata_path.exists():
-            self.demo_ml_metadata = json.loads(
-                metadata_path.read_text(encoding="utf-8")
-            )
+        self.demo_ml_metadata = _read_ml_metadata(settings.demo_ml_metadata_path)
+        self.mtc_ml_metadata = _read_ml_metadata(settings.mtc_ml_metadata_path)
 
     def close(self) -> None:
         self.demo_replay.stop()

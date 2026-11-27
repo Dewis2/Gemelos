@@ -81,6 +81,10 @@ export class DigitalTwinApplication {
     return this.gateway.getMlExperiment();
   }
 
+  getMtcMlExperiment(): Promise<DemoMlResult> {
+    return this.gateway.getMtcMlExperiment();
+  }
+
   listRoadSegments(): Promise<RoadSegment[]> {
     return this.gateway.listRoadSegments();
   }

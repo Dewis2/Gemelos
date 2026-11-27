@@ -10,6 +10,15 @@ def test_health_exposes_prototype_stage(client: TestClient) -> None:
     assert response.json() == {"status": "ok", "stage": "prototype"}
 
 
+def test_ml_endpoints_publish_distinct_datasets(client: TestClient) -> None:
+    prediction = client.get("/api/v1/demo/peru/ml")
+    regional = client.get("/api/v1/demo/peru/ml/mtc")
+
+    assert prediction.status_code == regional.status_code == 200
+    assert prediction.json()["training_dataset"] == "mitv_uci_metro_interstate"
+    assert regional.json()["training_dataset"] == "mtc_peru_toll_flow"
+
+
 def test_register_measurement_changes_twin_state(client: TestClient) -> None:
     payload = {
         "source_id": str(uuid4()),
